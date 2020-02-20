@@ -1,0 +1,89 @@
+ <project default="publish">
+ 
+ 	<!-- 
+		CRAFTY_TemplateCoBRA
+		
+		Note: Dir creation on sourceforge seems only be possible by rsync which is not usually supported
+		on Windows. Therefore, folder creation should be done manually per release (all files of a release
+		are stored in a single release folder). 
+	 -->
+ 	
+ 	<property file="../../project.properties"/>
+ 	
+	<property name="project" value="CRAFTY_TemplateCoBRA" />
+ 	<property name="project_unix" value="crafty-abm" />
+
+ 	<property name="dest_dir" location="C:/Data/LURG/Crafty/Releases/CRAFTY_TemplateCoBRA/" />
+ 	<property name="latest" value="latest-release"/>
+ 	
+ 	<property name="user" value="s-holzhauer"/>
+ 		
+ 	<property name="remote_files_dir" value="/home/frs/project/${project_unix}/"/>
+ 	<property name="remote_host_files" value="frs.sourceforge.net"/>
+ 			
+	<input
+    	message="Set version correctly in project.properties? (y/n)?"
+    	validargs="y,n"
+		defaultvalue="y"
+    	addproperty="do.delete"
+	/>
+	
+ 	<condition property="do.abort">
+		<equals arg1="n" arg2="${do.delete}"/>
+	</condition>
+	
+ 	<fail if="do.abort">Build aborted by user.</fail>
+		
+ 	<target name="publish" depends="copyRelease2sourceforge, clean"></target>
+
+ 	<!-- TODO make excludes work-->
+  	<target name="makeZip">
+ 	   <mkdir dir="${dest_dir}/${release}/"/>	
+ 	   <zip destfile="${dest_dir}/${release}/${project}_${release}.zip"
+ 	        update="false"
+ 	        compress="true"
+ 	        duplicate="add"
+ 	    	basedir="../../"
+ 	   		excludes="config/ant/PublishRelease.xml, lib_tools/*"
+  	   />
+  		
+  	   <mkdir dir="${dest_dir}/${latest}/"/>
+  	   <zip destfile="${dest_dir}/${latest}/${project}.zip"
+  	        update="false"
+  	        compress="true"
+  	        duplicate="add"
+  	    	basedir="../../"
+  	   		excludes="config/ant/PublishRelease.xml, lib_tools/*, bin/**/*"
+   	   />
+ 	</target>
+ 	
+ 	<taskdef name="logindialog" classname="antlogindialog.PasswordTask" classpath="" />
+ 	
+ 	<target name="queryPassword">
+		<logindialog message="Login Details: " username="username" defaultusername="${user}" password="passphrase"/>
+ 	</target>
+			
+ 	<target name="copyRelease2sourceforge" depends="queryPassword, makeZip">	
+		<echo>Transfering data from ${dest_dir} to ${remote_files_dir}...</echo>
+
+		<!--sshexec host="${remote_host_files}"
+				username="${user}"
+				password="${passphrase}"
+			  trust="true"
+				command="mkdir -p ${remote_files_dir}/"/-->
+			
+	 	<scp
+	       todir="${user},${project_unix}@${remote_host_files}:${remote_files_dir}" 
+	       password="${passphrase}"
+	 	   trust="true"
+	 		sftp="true" >
+	 		<fileset id="myfilesetFiles" dir="${dest_dir}/">
+	 		       		<include name="**/*"/>
+	 		</fileset>
+	  	</scp>
+ 	 </target>
+ 	
+	<target name="clean">
+		<delete failonerror="no" dir="${dest_dir}/${release}/"/>
+	</target>
+ </project>

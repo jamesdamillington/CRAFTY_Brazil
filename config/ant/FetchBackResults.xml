@@ -1,0 +1,39 @@
+ <project default="transfer">
+ 
+ 	<!-- 
+		- Copies content of ./output/<scenario> to local results folder
+	 -->
+
+ 	<property file="../../project.properties"/>
+ 		
+ 		
+ 	<property name="scenario" value="TEMPLATE"/>
+ 	<property name="releaseName" value="TEMPLATE"/>
+ 	<property name="world" value="TEMPLATE"/>
+ 	<property name="local_results_folder" value="TEMPLATE"/>
+ 	 	
+ 	
+ 	<property name="user" value="TEMPLATE"/>
+ 	
+ 	<!--property name="remote_base_dir" value="/exports/work/geos_lurg/sholzhau/CRAFTYtestModel"/-->
+ 	<property name="remote_base_dir" value="${lastRemoteDir}"/>
+ 	
+ 	<property name="remote_host" value="eddie.ecdf.ed.ac.uk"/>
+ 	
+ 	<taskdef name="logindialog" classname="antlogindialog.PasswordTask" classpath="" />
+ 	<target name="queryPassword">
+		<logindialog message="Login Details: " username="username" defaultusername="${user}" password="passphrase"/>
+ 	</target>
+
+	<target name="transfer" depends="queryPassword">	
+		<echo>Copy output files from ${remote_host}</echo>
+		
+	 	<scp
+	       file="${user}@${remote_host}:${remote_base_dir}/output/${scenario}-${world}/**" 
+	       password="${passphrase}"
+	 	   trust="true"
+	 		sftp="true" 
+	 			todir="${local_results_folder}/${scenario}-${world}">
+	  	</scp>
+  	</target>
+</project>

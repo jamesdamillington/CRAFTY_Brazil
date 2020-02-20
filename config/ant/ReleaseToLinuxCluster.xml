@@ -1,0 +1,86 @@
+ <project default="createConfigFileLinks">
+ 
+ 	<!-- 
+		- Creates a jar file to local directory
+		- copies required config (batch_config, log config, rs-folder) and resources from specified folders to new folder
+		- creates sym links to specified lib folder and data folder
+		
+		NOTE
+		- User-specific properties are stored in local.properties, which needs to be adjusted and 
+		  should not be comitted!
+		- You probabliy need to adapt the remote directory (which normally includes a username): "remote_base_dir"
+				
+		These contents should be present in $remote_config_file_source: (usually ./<Project>/standard)
+		- config/data: shapefiles etc.
+		- lib folder at $remote_config_file_source
+	 -->
+ 
+ 	<property file="../../project.properties"/>
+ 	<property file="../../local.properties"/>
+ 	
+ 	<!-- takes jars from here (important when they're not included in the project itself)-->	
+ 	<property name="CRAFTY-project" value="../../"/>
+ 	<property name="CRAFTY_Parallel-project" value="../CRAFTY_Parallel"/>
+ 	
+ 	<property name="local_lib_folder" value="${CRAFTY-project}/lib"/>
+ 	<property name="local_lib_folder_parallel" value="${CRAFTY_Parallel-project}/lib"/>
+ 	
+ 	<!-- values relative to ./ (Project Dir) -->
+ 	<property name="scriptGenerationScriptFolder" value="./config/cluster/"/>
+ 	<property name="scenarioDataFolder" value="./data/"/>
+ 		
+ 	<!-- value relative to ./config -->
+ 	<property name="log_config_file" value="./log/log4j_cluster.properties"/>
+ 	<property name="manifest_file" value="./manifest/META-INF/MANIFEST.MF"/>	
+ 	 	
+ 	
+ 	<property name="remote_base_dir" value="TEMPLATE"/>
+ 	<property name="remote_base_dir_prefix_fs_ssh" value="/exports/work/geos_lurg/"/>
+ 	<property name="remote_host" value="eddie.ecdf.ed.ac.uk"/>
+ 	
+ 	<property name="remote_config_file_source" value="${remote_base_dir_prefix_fs}${remote_base_dir}/standard"/>
+ 	<property name="remote_config_file_source_ssh" value="${remote_base_dir_prefix_fs_ssh}${remote_base_dir}/standard"/>
+ 	<property name="remote_lib_folder_name" value="CRAFTY_lib"/>
+
+ 	
+ 	<!-- Compound tasks -->
+
+ 	<!-- Setting / Reading properties -->
+ 	
+ 	<target name="checkLastRemoteDirSet" description="Write last used remote directory to properties if not set" unless="lastRemoteDirEnding">
+ 		<tstamp>
+ 			<format property="DSTAMP" pattern="yyyy-MM-dd_HH-mm" locale="ENGLISH, GERMANY"/>
+ 		</tstamp>
+ 		
+ 		<property name="local_dest_folder" value="${local_dest_folder}/${release}_${DSTAMP}"/>
+ 		<property name="remote_dir" value="${remote_base_dir}/${release}_${DSTAMP}"/> 
+ 		
+ 		<property name="lastRemoteDirEnding" value="${remote_dir}"/> 
+ 		<propertyfile file="../../project.properties">
+ 			<entry  key="lastRemoteDirEnding" value="${remote_dir}"/>
+ 		</propertyfile> 
+ 	</target>
+    
+ 	<target name="checkLastRemoteDir" depends="checkLastRemoteDirSet" description="Sets the recently used remote directory">
+ 		<property name="lastRemoteDir" value="${remote_base_dir_prefix_fs}${lastRemoteDirEnding}"/>
+ 		<property name="lastRemoteDir_ssh" value="${remote_base_dir_prefix_fs_ssh}${lastRemoteDirEnding}"/>
+ 	</target>
+ 	
+ 	<taskdef name="logindialog" classname="antlogindialog.PasswordTask" classpath="" />
+ 	<target name="queryPassword">
+		<logindialog message="Login Details: " username="username" defaultusername="${remoteuser}" password="passphrase"/>
+ 	</target>
+ 
+
+ 	<target name="createConfigFileLinks" depends="checkLastRemoteDir, queryPassword" 
+ 			description="Create symlinks to config file source.">
+ 		<echo>ln -s ${remote_config_file_source_ssh}/${remote_lib_folder_name} ${lastRemoteDir_ssh}/${remote_lib_folder_name}</echo>
+		<sshexec host="${remote_host}"
+				username="${remoteuser}"
+				password="${passphrase}"
+			  trust="true"
+				command="mkdir ${lastRemoteDir_ssh}/config;	 
+					ln -s ${remote_config_file_source_ssh}/${remote_lib_folder_name} ${lastRemoteDir_ssh}/${remote_lib_folder_name};
+				"/>
+ 	</target>
+</project>

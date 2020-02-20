@@ -1,0 +1,357 @@
+ <project default="createConfigFileLinks">
+ 
+ 	<!-- 
+		- Creates a jar file to local directory
+		- copies required config (batch_config, log config, rs-folder) and resources 
+		  from specified folders to new folder
+		- creates sym links to specified lib folder and data folder
+		
+		NOTE
+		- User-specific properties are stored in local.properties, which needs to be adjusted and 
+		  should not be comitted!
+		- You probabliy need to adapt the remote directory (which normally includes a username): 
+		  "remote_base_dir"
+				
+		These contents should be present in $remote_config_file_source: (usually ./<Project>/standard)
+		- config/data: shapefiles etc.
+		- lib folder at $remote_config_file_source
+	 -->
+ 
+ 	<property file="../../project.properties"/>
+ 	<property file="../../local.properties"/>
+ 	
+ 	
+ 	<property name="local_lib_folder" value="${CRAFTY-project}/lib"/>
+ 	<property name="local_lib_folder_parallel" value="${CRAFTY_Parallel-project}/lib"/>
+
+ 	<property 	name="remote_config_file_source_ssh" 
+ 				value="${remote_base_dir_prefix_ssh}${remote_base_dir}/standard"/>
+
+ 	
+ 	<!-- Compound tasks -->
+
+ 	<!-- Setting / Reading properties -->
+ 	
+ 	<target name="checkLastRemoteDirSet" description="Write last used remote directory to 
+ 		properties if not set" unless="lastRemoteDirEnding">
+ 		<tstamp>
+ 			<format property="DSTAMP" pattern="yyyy-MM-dd_HH-mm" locale="ENGLISH, GERMANY"/>
+ 		</tstamp>
+ 		
+ 		<property name="local_dest_folder" value="${local_dest_folder}/${release}_${DSTAMP}"/>
+ 		<property name="remote_dir" value="${remote_base_dir}/${release}_${DSTAMP}"/> 
+ 		
+ 		<property name="lastRemoteDirEnding" value="${remote_dir}"/> 
+ 		<propertyfile file="../../project.properties">
+ 			<entry  key="lastRemoteDirEnding" value="${remote_dir}"/>
+ 		</propertyfile> 
+ 	</target>
+    
+ 	<target name="checkLastRemoteDir" depends="checkLastRemoteDirSet" 
+ 			description="Sets the recently used remote directory">
+ 		<property name="lastRemoteDir" value="${remote_base_dir_prefix_ssh}${lastRemoteDirEnding}"/>
+ 		<property name="lastRemoteDir_ssh" value="${remote_base_dir_prefix_ssh}${lastRemoteDirEnding}"/>
+ 	</target>
+
+	<target name="make_jar" description="Create JAR archive" depends="">
+		<echo>Create jarfile ${local_dest_folder}/${release}/${releaseName}.jar...</echo>
+		<mkdir dir="${local_dest_folder}/${release}"/>
+		<jar	destfile="${local_dest_folder}/${release}/${releaseName}.jar"
+				basedir="${basedir}/../../bin"
+				includes="**/*.class"
+				update="false"
+				compress="true"
+				duplicate="add"
+				manifest="${basedir}/../${manifest_file}">
+			<manifest>
+				<attribute name="Built-By" value="${jarFileBuilder}"/>
+				<attribute name="Implementation-Version"  value="${release}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+			</manifest>
+		</jar>
+    </target>
+ 	
+	<target name="transfer_jar" depends="make_jar, checkLastRemoteDir" 
+			description="Create and transfer model JAR archive">	
+		<echo>Copy model jar file to ... ${remote_host}</echo>
+			
+		<sshexec	host="${remote_host}"
+					username="${remoteuser}"
+ 					keyfile="${ssh_private_key}"
+					passphrase="${ssh_private_key_passphrase}"
+					trust="true"
+					command="mkdir -p ${lastRemoteDir_ssh}"/>
+		
+	 	<scp	todir="${remoteuser}@${remote_host}:${lastRemoteDir}"
+	 			keyfile="${ssh_private_key}"
+ 				passphrase="${ssh_private_key_passphrase}"
+				trust="true"
+				sftp="true" 
+				file="${local_dest_folder}/${release}/${releaseName}.jar"/>
+  	</target>
+
+ 	<target name="transfer_Rscripts_cluster" depends="checkLastRemoteDir"
+ 		description="Copies R scripts for execution on cluster">
+ 		<echo>Copy cluster R-scripts to ... ${remote_host}</echo>
+		
+ 		<antform 	title="Select R-script folder" 
+					save="../../local.properties"
+					image="doc/images/testlogo.jpg">
+			<label>Choose the R scripts subfolder to transfer!</label>
+			<fileSelectionProperty	label="Subfolder: " 
+									property="rscripts_subfolder_cluster"
+									directoryChooser="true"
+									columns="77"
+			/>
+		</antform>
+		
+		<propertyregex 	property="rscripts_subfolder_cluster_raw"
+						input="${rscripts_subfolder_cluster}"
+						regexp=".*config\\R\\"
+						replace=""
+						global="true"
+		/>
+ 		<echo>${rscripts_subfolder_cluster_raw}</echo>
+		<propertyregex 	property="rscripts_subfolder_cluster_final"
+								input="${rscripts_subfolder_cluster_raw}"
+								regexp="\\"
+								replace="/"
+								global="true"
+		/>
+ 		
+ 		<echo>${rscripts_subfolder_cluster_final}</echo>
+		<sshexec 	host="${remote_host}"
+					username="${remoteuser}"
+					keyfile="${ssh_private_key}"
+					passphrase="${ssh_private_key_passphrase}"
+					trust="true"
+					command="mkdir -p ${lastRemoteDir_ssh}/config/R/${rscripts_subfolder_cluster_final}"
+		/>
+		
+		<scp	todir="${remoteuser}@${remote_host}:${lastRemoteDir_ssh}/config/R/${rscripts_subfolder_cluster_final}" 
+ 				keyfile="${ssh_private_key}"
+				passphrase="${ssh_private_key_passphrase}"
+				trust="true"
+				sftp="true" >
+			<fileset id="myfileset" dir="${rscripts_subfolder_cluster}">
+				<include name="**/*"/>
+			</fileset>
+		</scp>
+ 	</target>
+ 	
+ 	<target name="transfer_standard" description="Transfer libs and Co. to cluster">	
+ 			<echo>Copy lib files to ... ${remote_host}</echo>
+ 		
+		<sshexec 	host="${remote_host}"
+					username="${remoteuser}"
+ 					keyfile="${ssh_private_key}"
+					passphrase="${ssh_private_key_passphrase}"
+					trust="true"
+					command="mkdir -p ${remote_config_file_source_ssh}/${remote_lib_folder_name}"
+		/>
+		
+		<scp	todir="${remoteuser}@${remote_host}:${remote_config_file_source_ssh}/${remote_lib_folder_name}" 
+				keyfile="${ssh_private_key}"
+ 				passphrase="${ssh_private_key_passphrase}"
+				trust="true"
+				sftp="true" >
+			<fileset id="myfileset" dir="${local_lib_folder}">
+				<include name="**/*"/>
+			</fileset>
+		</scp>		
+ 	</target>
+ 	
+ 	<target name="transfer_Runinfos" depends="checkLastRemoteDir"
+ 		description="Copies Runinfos to cluster">
+ 		<echo>Copy Runinfos to ... ${remote_host}</echo>
+		
+ 		<antform 	title="Select Runinfos file" 
+					save="../../local.properties"
+					image="CraftyR.jpg">
+			<label>Choose the Runinfos file to transfer!</label>
+			<fileSelectionProperty	label="File: " 
+									property="file_runinfo"
+									directoryChooser="false"
+									columns="77"
+			/>
+		</antform>
+		
+		<propertyregex 	property="rscripts_subfolder_cluster_raw"
+						input="${rscripts_subfolder_cluster}"
+						regexp=".*config\\R\\"
+						replace=""
+						global="true"
+		/>
+ 		<echo>${rscripts_subfolder_cluster_raw}</echo>
+		<propertyregex 	property="rscripts_subfolder_cluster_final"
+								input="${rscripts_subfolder_cluster_raw}"
+								regexp="\\"
+								replace="/"
+								global="true"
+		/>
+		
+		<scp	file="${file_runinfo}"
+				todir="${remoteuser}@${remote_host}:${lastRemoteDir_ssh}" 
+ 				keyfile="${ssh_private_key}"
+				passphrase="${ssh_private_key_passphrase}"
+				trust="true"
+				sftp="true" >
+		</scp>
+ 	</target>
+				
+ 	<target name="createConfigFileLinks" depends="checkLastRemoteDir" 
+ 			description="Create symlinks to config file source.">
+ 		<echo>ln -s ${remote_config_file_source_ssh}/${remote_lib_folder_name} 
+ 			${lastRemoteDir_ssh}/${remote_lib_folder_name}</echo>
+		<sshexec host="${remote_host}"
+				username="${remoteuser}"
+				keyfile="${ssh_private_key}"
+				passphrase="${ssh_private_key_passphrase}"
+			  trust="true"
+				command="mkdir -p ${lastRemoteDir_ssh}/config;	 
+					ln -s ${remote_config_file_source_ssh}/${remote_lib_folder_name} ${lastRemoteDir_ssh}/${remote_lib_folder_name};
+				"/>
+ 	</target>
+ 	
+	<target name="transferPythonGenerationScriptFiles" description="Transfer python script generation scripts. Target: Cluster" 
+		depends="checkLastRemoteDir">
+		
+		<sshexec 	host="${remote_host}"
+					username="${remoteuser}"
+					keyfile="${ssh_private_key}"
+					passphrase="${ssh_private_key_passphrase}"
+					trust="true"
+					command="mkdir -p ${lastRemoteDir_ssh}/python"
+		/>
+						
+		<scp	todir="${remoteuser}@${remote_host}:${lastRemoteDir_ssh}/python" 
+				keyfile="${ssh_private_key}"
+ 				passphrase="${ssh_private_key_passphrase}"
+				trust="true"
+				sftp="true" >
+			<fileset id="myfileset" dir="${CRAFTY-project}/${pythonScriptGenerationScriptFolder}">
+				<include name="**/*"/>
+			</fileset>
+		</scp>
+ 	</target>
+		
+ 	
+	<taskdef name="antform" classname="com.sardak.antform.AntForm"/>
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+	
+ 	<target name="transfer_config" description="Transfer config files. Target: Cluster" 
+ 		depends="checkLastRemoteDir">	
+		<echo>Copy data files from ${basedir}/../../config/log 
+			  to ... ${lastRemoteDir_ssh}/config/log</echo>
+		
+		<!--echo>Connect to ${remote_host} for ${remoteuser} using ${ssh_private_key} and ${ssh_private_key_passphrase}</echo-->
+		
+		<sshexec 	host="${remote_host}"
+					username="${remoteuser}"
+ 					keyfile="${ssh_private_key}"
+					passphrase="${ssh_private_key_passphrase}"
+					trust="true"
+					command="mkdir -p ${lastRemoteDir_ssh}/config/log"
+		/>
+		
+		<scp	todir="${remoteuser}@${remote_host}:${lastRemoteDir_ssh}/config/log" 
+				keyfile="${ssh_private_key}"
+ 				passphrase="${ssh_private_key_passphrase}"
+				trust="true"
+				sftp="true" >
+			<fileset id="myfileset" dir="${basedir}/../../config/log">
+				<include name="**/*"/>
+			</fileset>
+		</scp>		
+  	</target>
+ 		
+ 	<target name="transfer_data" description="Transfer entire data folder. Target: Cluster" 
+ 		depends="checkLastRemoteDir">	
+		<echo>Copy data files from ${basedir}/../../data 
+			  to ... ${lastRemoteDir_ssh}/data</echo>
+		
+		<!--echo>Connect to ${remote_host} for ${remoteuser} using ${ssh_private_key} and ${ssh_private_key_passphrase}</echo-->
+		
+		<sshexec 	host="${remote_host}"
+					username="${remoteuser}"
+ 					keyfile="${ssh_private_key}"
+					passphrase="${ssh_private_key_passphrase}"
+					trust="true"
+					command="mkdir -p ${lastRemoteDir_ssh}/data/"
+		/>
+		
+		<scp	todir="${remoteuser}@${remote_host}:${lastRemoteDir_ssh}/data/" 
+				keyfile="${ssh_private_key}"
+ 				passphrase="${ssh_private_key_passphrase}"
+				trust="true"
+				sftp="true" >
+			<fileset id="myfileset" dir="${basedir}/../../data">
+				<include name="**/*"/>
+			</fileset>
+		</scp>		
+  	</target>
+ 	
+	<target name="transfer_subdata" description="Transfer selected data subfolder. Target: Cluster" 
+ 		depends="checkLastRemoteDir">	
+		<antform 	title="Select (Sub-)Data folder (may not be data folder itself!)" 
+					save="../../local.properties"
+					image="doc/images/testlogo.jpg">
+			<label>Choose the subfolder to transfer!</label>
+			<fileSelectionProperty	label="Subfolder: " 
+									property="data_subfolder"
+									directoryChooser="true"
+									columns="77"
+			/>
+		</antform>
+		
+		<propertyregex 	property="data_subfolder_extract_raw"
+						input="${data_subfolder}"
+						regexp=".*data\\"
+						replace=""
+						global="true"
+		/>
+		
+		<property name="data_subfolder_extract" value="${data_subfolder_extract_raw}"/>	
+		<propertyregex 	property="data_subfolder_extract"
+								input="${data_subfolder_extract_raw}"
+								regexp="\\"
+								replace="/"
+								global="true"
+		/>
+		
+		<echo>Copy data files from ${data_subfolder} 
+			  to ... ${lastRemoteDir_ssh}/data/${data_subfolder_extract}</echo>
+		
+		<!--echo>Connect to ${remote_host} for ${remoteuser} using ${ssh_private_key} and ${ssh_private_key_passphrase}</echo-->
+		
+		<sshexec 	host="${remote_host}"
+					username="${remoteuser}"
+ 					keyfile="${ssh_private_key}"
+					passphrase="${ssh_private_key_passphrase}"
+					trust="true"
+					command="mkdir -p ${lastRemoteDir_ssh}/data/${data_subfolder_extract}"
+		/>
+		
+		<scp	todir="${remoteuser}@${remote_host}:${lastRemoteDir_ssh}/data/${data_subfolder_extract}" 
+				keyfile="${ssh_private_key}"
+ 				passphrase="${ssh_private_key_passphrase}"
+				trust="true"
+				sftp="true" >
+			<fileset id="myfileset" dir="${data_subfolder}">
+				<include name="**/*"/>
+			</fileset>
+		</scp>		
+  	</target>
+ 	
+ 	<target name="transfer_crafty_cobra" description="Transfer CRAFTY CoBRA lib. Target: Cluster">	
+ 		<echo>Copy crafty lib to ... ${remote_config_file_source_ssh}/${remote_lib_folder_name}/</echo>
+ 		
+		<scp	file="${local_lib_folder}/CRAFTY-CoBRA.jar"
+				todir="${remoteuser}@${remote_host}:${remote_config_file_source_ssh}/${remote_lib_folder_name}" 
+				keyfile="${ssh_private_key}"
+ 				passphrase="${ssh_private_key_passphrase}"
+				trust="true"
+				sftp="true" >
+		</scp>	
+ 	</target>
+</project>

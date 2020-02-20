@@ -1,0 +1,193 @@
+ <project default="transferAll">
+ 
+ 	<!-- 
+		- Tasks to copy specific files to cluster using the file system (windows share)
+		- creates sym links to specified lib folder and data folder
+		
+		NOTE
+		- User-specific properties are stored in local.properties, which needs to be adjusted and 
+		  should not be comitted!
+		- You probably need to adapt the remote directory (which normally includes a username): "remote_base_dir"
+	 -->
+ 
+ 	<property file="../../project.properties"/>
+ 	<property file="../../local.properties"/>
+ 	
+ 	<property name="releaseName" value="CRAFTY-TEMPLATE"/>
+ 	
+ 	<!-- takes jars from here (important when they're not included in the project itself)-->	
+ 	<property name="CRAFTY-project" value="TEMPLATE/TEMPLATE"/>
+ 	<property name="CRAFTY_Parallel-project" value="TEMPLATE/TEMPLATE"/>
+ 	
+ 	<property name="local_lib_folder" value="${CRAFTY-project}/lib"/>
+ 	<property name="local_lib_folder_parallel" value="${CRAFTY_Parallel-project}/lib"/>
+ 	
+ 	<!-- values relative to ./ (Project Dir) -->
+ 	<property name="scriptGenerationScriptFolder" value="./config/cluster/"/>
+ 	<property name="scenarioDataFolder" value="./data/"/>
+ 		
+ 	<!-- value relative to ./config -->
+ 	<property name="log_config_file" value="./log/log4j_cluster.properties"/>
+ 	<property name="manifest_file" value="./manifest/META-INF/MANIFEST.MF"/>	
+ 	 	
+ 	
+ 	<property name="remote_base_dir" value="sholzhau/CRAFTY-TEMPLATE"/>
+ 	<property name="remote_base_dir_prefix_fs_ssh" value="/exports/work/geos_lurg/"/>
+ 	<property name="remote_host" value="eddie.ecdf.ed.ac.uk"/>
+ 	
+ 	<property name="remote_config_file_source" value="${remote_base_dir_prefix_fs}${remote_base_dir}/standard"/>
+ 	<property name="remote_config_file_source_ssh" value="${remote_base_dir_prefix_fs_ssh}${remote_base_dir}/standard"/>
+ 	<property name="remote_lib_folder_name" value="CRAFTY_lib"/>
+
+ 	
+ 	<!-- Compound tasks -->
+ 	
+ 	<target name="transferAll" depends="transferGenerationScriptFiles, transferData, transferLogConfig"/>
+ 	
+ 	<!-- Setting / Reading properties -->
+ 	
+ 	<target name="checkLastRemoteDirSet" description="Write last used remote directory to properties if not set" unless="lastRemoteDirEnding">
+ 		<tstamp>
+ 			<format property="DSTAMP" pattern="yyyy-MM-dd_HH-mm" locale="ENGLISH, GERMANY"/>
+ 		</tstamp>
+ 		
+ 		<property name="local_dest_folder" value="${local_dest_folder}/${release}_${DSTAMP}"/>
+ 		<property name="remote_dir" value="${remote_base_dir}/${release}_${DSTAMP}"/> 
+ 		
+ 		<property name="lastRemoteDirEnding" value="${remote_dir}"/> 
+ 		<propertyfile file="../../project.properties">
+ 			<entry  key="lastRemoteDirEnding" value="${remote_dir}"/>
+ 		</propertyfile> 
+ 	</target>
+    
+ 	<target name="checkLastRemoteDir" depends="checkLastRemoteDirSet" description="Sets the recently used remote directory">
+ 		<property name="lastRemoteDir" value="${remote_base_dir_prefix_fs}${lastRemoteDirEnding}"/>
+ 		<property name="lastRemoteDir_ssh" value="${remote_base_dir_prefix_fs_ssh}${lastRemoteDirEnding}"/>
+ 	</target>
+ 	
+ 	<taskdef name="logindialog" classname="antlogindialog.PasswordTask" classpath="" />
+ 	<target name="queryPassword">
+		<logindialog message="Login Details: " username="username" defaultusername="${user}" password="passphrase"/>
+ 	</target>
+ 
+ 	<!-- Copy specific data -->
+ 			
+	<target name="transferGenerationScriptFiles" description="Transfer script generation scripts. Target: Cluster" 
+		depends="checkLastRemoteDir">
+		<mkdir dir="${lastRemoteDir}/python/"/>  
+ 		<copy todir="${lastRemoteDir}/python/">
+ 			<fileset id="myfileset2" dir="${basedir}/../../${scriptGenerationScriptFolder}">
+ 				<include name="**/*.*"/>
+ 			</fileset>
+ 		</copy>
+ 	</target>
+
+ 	<target name="transferData" description="Transfer data (copmlete). Target: Cluster" 
+ 		depends="checkLastRemoteDir">
+ 		<mkdir dir="${lastRemoteDir}/data/"/>   
+ 		<copy todir="${lastRemoteDir}/data/">
+ 		  	<fileset id="myfileset3" dir="${basedir}/../../${scenarioDataFolder}">
+ 				<include name="**/*.*"/>
+ 		  		<exclude name="_versions/**/*"/>
+ 		  		<exclude name="_zz*/**/*"/>
+ 			 </fileset>
+ 		</copy>
+ 	</target>
+
+ 	<target name="transferLogConfig" description="Transfer log config. Target: Cluster" depends="checkLastRemoteDir">
+ 		<mkdir dir="${lastRemoteDir}/data/"/>   
+ 		<copy file="${basedir}/../${log_config_file}" todir="${lastRemoteDir}/config/log/">
+ 		</copy>
+ 	</target>
+ 	
+ 	<target name="transfer_standard" description="Transfer libs and Co. Target: Cluster">	
+ 			<echo>Copy lib files to ... ${remote_config_file_source}/${remote_lib_folder_name}</echo>
+ 		<copy todir="${remote_config_file_source}/${remote_lib_folder_name}">
+ 			<fileset id="myfileset" dir="${local_lib_folder}">
+ 				<include name="**/*"/>
+ 			</fileset>
+ 		</copy>
+ 	</target>
+
+ 	<target name="transfer_crafty" description="Transfer crafty lib. Target: Cluster">	
+ 		<echo>Copy crafty lib to ... ${remote_config_file_source}/${remote_lib_folder_name}/</echo>
+ 			
+ 		<copy file="${local_lib_folder}/CRAFTY.jar" 
+ 			todir="${remote_config_file_source}/${remote_lib_folder_name}/"/>
+ 	</target>
+ 	  	
+ 	<target name="transfer_crafty_parallel" description="Transfer crafty parallel lib. Target: Cluster">	
+ 		<echo>Copy crafty lib to ... ${remote_config_file_source}/${remote_lib_folder_name}/</echo>
+ 			
+ 		<copy file="${local_lib_folder}/CRAFTY-CoBRA.jar" 
+ 			todir="${remote_config_file_source}/${remote_lib_folder_name}/"/>
+ 	</target>
+ 	
+ 	<target name="transfer_MoRe" description="Transfer MoRe lib. Target: Cluster">	
+ 		<echo>Copy crafty lib to ... ${remote_config_file_source}/${remote_lib_folder_name}/</echo>
+ 			
+ 		<copy file="${local_lib_folder}/MoRe.jar" 
+ 			todir="${remote_config_file_source}/${remote_lib_folder_name}/"/>
+ 	</target>	 	
+ 	
+ 	
+	<taskdef name="antform" classname="com.sardak.antform.AntForm"/>
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+		
+	<target name="transfer_subdata" description="Transfer selected data subfolder. Target: Cluster" 
+ 		depends="checkLastRemoteDir">	
+		<antform title="Select (Sub-)Data folder" 
+			save="../../project.properties"
+			image="doc/images/testlogo.jpg">
+			<label>Choose the subfolder to transfer!</label>
+			<fileSelectionProperty label="Subfolder: " 
+				property="data_subfolder"  directoryChooser="true" columns="77"
+			/>
+		</antform>
+		<propertyregex property="data_subfolder_extract"
+			               input="${data_subfolder}"
+			               regexp=".*data\\"
+			               replace=""
+			               global="true" />	
+		<echo>Copy data files from ${data_subfolder} 
+			  to ... ${lastRemoteDir}/data/${data_subfolder_extract}</echo>
+		<copy todir="${lastRemoteDir}/data/${data_subfolder_extract}/">
+	 		<fileset id="myfileset" dir="${data_subfolder}">
+	 		       <include name="**/*"/>
+	 		</fileset>
+		</copy>			
+  	</target>
+ 		  		
+ 	
+ 	<!-- Generate JAR -->
+ 	
+	<target name="make_jar" description="Create and transfer JAR archive. Target: Cluster" depends="checkLastRemoteDir">
+		<echo>Create jarfile ${lastRemoteDir}/${releaseName}.jar...</echo>
+	    <jar destfile="${lastRemoteDir}/${releaseName}.jar"
+	    	basedir="${basedir}/../../bin"
+	        includes="**/*.class"
+	        update="false"
+	        compress="true"
+	        duplicate="add"
+	        manifest="${basedir}/../${manifest_file}">
+	       <manifest>
+	            <attribute name="Built-By" value="${jarFileBuilderName}"/>
+	            <attribute name="Implementation-Version"  value="${release}"/>
+	            <attribute name="Built-Date" value="${TODAY}"/>
+	        </manifest>
+	    </jar>
+    </target>
+ 	
+ 	<!-- On Server -->
+ 	
+ 	<target name="createConfigFileLinks" depends="queryPassword, checkLastRemoteDir" 
+ 		description="Create symlinks to config file source.">
+		<sshexec host="${remote_host}"
+				username="${user}"
+				password="${passphrase}"
+			  trust="true"
+				command="mkdir -p ${lastRemoteDir_ssh}/config;		 
+					ln -s ${remote_config_file_source_ssh}/${remote_lib_folder_name} ${lastRemoteDir_ssh}/${remote_lib_folder_name};
+				"/>
+ 	</target>
+</project>

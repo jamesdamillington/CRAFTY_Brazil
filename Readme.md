@@ -1,3 +1,11 @@
+# CRAFTY Brazil
+
+This repo contains code for an implementation of the CRAFTY model across a Brazilian study area. The code was originally cloned from [this repo](https://bitbucket.org/geoslurg/crafty_cobra/). The original readme for that repo is copied below. 
+
+This model version is intended for use with [BioLUC](https://github.com/StevenPeterson/CRAFTY-BioLuc), linked via [FLUTE Maestro](https://github.com/jamesdamillington/FLUTE_Maestro). Scripts to [create model input data](https://github.com/jamesdamillington/CRAFTYInput) and to [analyse model outputs](https://github.com/jamesdamillington/CRAFTYOutput) are also available. 
+
+Original repo readme follows...
+
 # CRAFTY CoBRA Template
 
 ## Instructions for using the template

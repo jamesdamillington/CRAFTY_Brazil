@@ -4,7 +4,7 @@ This repo contains code for an implementation of the CRAFTY model across a Brazi
 
 This model version is intended for use with [BioLUC](https://github.com/StevenPeterson/CRAFTY-BioLuc), linked via [FLUTE Maestro](https://github.com/jamesdamillington/FLUTE_Maestro). Scripts to [create model input data](https://github.com/jamesdamillington/CRAFTYInput) and to [analyse model outputs](https://github.com/jamesdamillington/CRAFTYOutput) are also available. 
 
-Original repo readme follows...
+Original repo readme follows, and see the newer [CRAFTY homepage](https://landchange.imk-ifu.kit.edu/CRAFTY)
 
 # CRAFTY CoBRA Template
 

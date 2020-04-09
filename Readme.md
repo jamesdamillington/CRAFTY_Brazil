@@ -1,4 +1,5 @@
 # CRAFTY-Brazil
+[![DOI](https://zenodo.org/badge/241864383.svg)](https://zenodo.org/badge/latestdoi/241864383)
 
 This repo contains code for an implementation of the CRAFTY model across a Brazilian study area. The code was originally cloned from [this repo](https://bitbucket.org/geoslurg/crafty_cobra/). The original readme for that repo is copied below. 
 

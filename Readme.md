@@ -1,4 +1,4 @@
-# CRAFTY Brazil
+# CRAFTY-Brazil
 
 This repo contains code for an implementation of the CRAFTY model across a Brazilian study area. The code was originally cloned from [this repo](https://bitbucket.org/geoslurg/crafty_cobra/). The original readme for that repo is copied below. 
 

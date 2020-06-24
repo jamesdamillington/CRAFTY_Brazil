@@ -1,0 +1,98 @@
+\documentclass[a4paper]{article}
+
+<<configdef, echo=FALSE, results='hide', warning=FALSE>>=
+		source(simp$simpDefinition)
+
+# ADAPT:
+simp$sim$folder 	<- "parentFolder/_version"
+
+setwd(paste(simp$dirs$simp, sep="/"))
+source(paste(simp$dirs$simp, simp$sim$folder, "simp.R", sep="/"))
+
+
+randomSeed 	<- 0
+firstrunid 	<- 0
+lastrunid 	<- 1
+
+simps <- list()
+for(i in firstrunid:lastrunid) {
+	s <- simp
+	s$sim$id					<- paste(i, "-", randomSeed, sep="")
+	s$sim$shortid				<- paste(i, "-", randomSeed, sep="")
+	simps <- append(simps, list(s))
+}
+
+simp$sim$runids 	<- c(paste(firstrunid, randomSeed, sep="-"))			# run to deal with
+simp$sim$id			<- c(paste(firstrunid, randomSeed, sep="-"))
+
+simp$fig$init <- function(simp, outdir, filename) {}
+simp$fig$close<- function() {}
+
+# adjust figure settings:
+library(ggplot2)
+library(kfigr)
+#ggplot2::theme_set(visualisation_raster_legendonlytheme(base_size = 10))
+simp$fig$facetlabelsize	<- 11
+
+
+opts_chunk$set(comment=NA, echo=FALSE, results='hide', fig.pos='h!', fig.align='center',
+		out.width='\\textwidth', warning=FALSE, message=FALSE,
+		kfigr.prefix = TRUE)
+@
+
+\usepackage[margin=0.5in]{geometry}
+\usepackage{varioref}
+\usepackage[pdftex]{hyperref}
+\usepackage{float}
+\usepackage{cprotect}
+
+\cprotect\title{TEMPLATE\\\verb|\Sexpr{simp$sim$version}|}
+\author{TEMPLATE}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Configuration}
+\begin{itemize}
+\item No configuration annotations.
+\end{itemize}
+
+\subsection{Run Information}
+\label{runinfo}
+<<runinfo, results='asis'>>=
+		hl_compileruninfos(simp)
+@
+
+
+\newpage
+\section{Results}
+\subsection{AFT Composition}
+<<aftcomposition>>=
+		hl_comp_aggregate_aftcompositions(simp, simps, dataname="dataAggregateAFTComposition")
+@
+
+\subsection{Demand and Supply}
+<<demandsupply>>=
+		hl_comp_demandsupply(simp, simps, dataname="dataAggregateSupplyDemand")
+@
+
+\subsection{Single Demand and Supply}
+<<singledemandsupply>>=
+		for(i in firstrunid:lastrunid) {
+			simp$sim$id			<- paste(i, "-", randomSeed, sep="")
+			hl_aggregate_demandsupply(simp, dataname="dataAggregateSupplyDemand")
+		}
+@
+
+\section{Observations}
+\begin{itemize}
+  \item No observations yet.
+\end{itemize}  
+
+
+% This line must not be copied or deleted!
+		\end{document}

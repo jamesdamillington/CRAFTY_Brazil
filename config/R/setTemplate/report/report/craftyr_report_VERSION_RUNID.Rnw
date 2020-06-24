@@ -1,0 +1,333 @@
+\documentclass[a4paper]{article}
+
+<<configdef, echo=FALSE, results='hide', warning=FALSE>>=
+source(simp$simpDefinition)
+
+# ADAPT:
+simp$sim$folder 	<- "parentFolder/_version"
+
+setwd(paste(simp$dirs$simp, sep="/"))
+source(paste(simp$dirs$simp, simp$sim$folder, "simp.R", sep="/"))
+
+simp$sim$runids 	<- c("1-0")			# run to deal with
+simp$sim$id			<- "1-0"		 	# ID to identify specific data collections (e.g. regions)
+simp$sim$task		<- "1-0"			# Name of surrounding folder, usually a description of task 
+aftParamId			<- 0
+
+simp$fig$init <- function(simp, outdir, filename) {}
+simp$fig$close<- function() {}
+
+futile.logger::flog.threshold(futile.logger::INFO, name='craftyr')
+
+# adjust figure settings:
+library(ggplot2)
+library(kfigr)
+#ggplot2::theme_set(visualisation_raster_legendonlytheme(base_size = 10))
+simp$fig$facetlabelsize	<- 11
+
+opts_chunk$set(comment=NA, echo=FALSE, results='hide', fig.pos='H', fig.align='center',
+		out.width='\\textwidth', warning=FALSE, message=FALSE,
+		kfigr.prefix = TRUE)
+@
+
+\usepackage[margin=0.5in]{geometry}
+\usepackage{varioref}
+\usepackage[pdftex]{hyperref}
+\usepackage{float}
+\usepackage{cprotect}
+
+% http://tex.stackexchange.com/questions/32495/linking-the-section-text-to-the-toc
+\usepackage[explicit]{titlesec}
+
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{\chaptertitlename\ {\fontfamily{cmr}\selectfont\thechapter}}{20pt}{\hyperlink{chap-\thechapter}{\Huge#1}
+\addtocontents{toc}{\protect\hypertarget{chap-\thechapter}{}}}
+\titleformat{name=\chapter,numberless}
+  {\normalfont\huge\bfseries}{}{-20pt}{\Huge#1}
+\titleformat{\section}
+  {\normalfont\Large\bfseries}{\thesection}{1em}{\hyperlink{sec-\thesection}{#1}
+\addtocontents{toc}{\protect\hypertarget{sec-\thesection}{}}}
+\titleformat{name=\section,numberless}
+  {\normalfont\Large\bfseries}{}{0pt}{#1}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries}{\thesubsection}{1em}{\hyperlink{subsec-\thesubsection}{#1}
+\addtocontents{toc}{\protect\hypertarget{subsec-\thesubsection}{}}}
+\titleformat{name=\subsection,numberless}
+  {\normalfont\large\bfseries}{\thesubsection}{0pt}{#1}
+  
+  
+\cprotect\title{TEMPLATE\\\verb|\Sexpr{simp$sim$version}| \verb|\Sexpr{simp$sim$id}|}
+\author{TEMPLATE}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Configuration}
+\begin{itemize}
+  \item No configuration annotations.
+\end{itemize}
+
+\subsection{CRAFTY Model Framework}
+\begin{itemize}
+  \item See \url{http://crafty-abm.sourceforge.net/} for information about the
+  CRAFTY model framework.
+  \item The most relevant paper about the model framework is
+  \url{http://www.sciencedirect.com/science/article/pii/S1364815214001583}.
+  \item An ODD (Overview, Design concepts, Details) protocol is also available
+  at \url{https://www.wiki.ed.ac.uk/display/CRAFTY/Home}.
+\end{itemize}
+
+\subsection{Relevant Information}
+\begin{itemize}
+  \item No further relevant information given.
+\end{itemize}
+
+\subsection{Run Information}
+\label{runinfo}
+<<runinfo, results='asis'>>=
+hl_compileruninfos(simp)
+@
+
+\subsection{Run Parameters}
+\label{runparams}
+<<runparams, results='asis'>>=
+hl_compilerunparams(simp)
+@
+
+\section{Input Data}
+\subsection{Overview}
+<<inputfiles, results='asis'>>=
+hl_printRequiredInputFilesTable(simp)
+@
+
+\subsection{Capital Changes}
+<<capitalchanges, results='asis'>>=
+hl_printCapitalChangesTable(simp)
+@
+
+\subsection{Agent Parameters}
+<<agentparams, results='asis'>>=
+hl_printAgentParameters(simp, columnindices = c(2:7, 9))
+@
+
+\subsection{Agent Production Parameters}
+<<productivities, results='asis'>>=
+hl_printAgentProductionParameters(simp, filenamepostfix = "_mono_medium")
+@
+
+\subsection{Service Demand}
+<<demandNumbers, message=TRUE, error=TRUE, warning=TRUE, results='asis'>>=
+l <- futile.logger::flog.threshold(futile.logger::ERROR, name='craftyr')
+hl_table_demand(simp, dataname = "dataAggregateSupplyDemand", latex = TRUE)
+l <- futile.logger::flog.threshold(futile.logger::INFO, name='craftyr')
+@
+
+\subsection{Benefit Functions}
+\label{competition}
+<<competition, fig.height=3.5, anchor="figure">>=
+hl_printCompetitionFunctions(simp, xrange = c(-0.5,0.5))
+@
+
+\newpage
+\section{Results}
+\subsection{Aggregated Data}
+\subsubsection{Demand and Supply}
+\label{demandsupply}
+<<demandsupply, fig.height=4>>=
+hl_aggregate_demandsupply(simp, dataname="dataAggregateSupplyDemand")
+@
+
+<<demandsupplyNumbers, message=TRUE, error=FALSE, warning=FALSE, results='asis'>>=
+futile.logger::flog.threshold(futile.logger::ERROR, name='craftyr')
+hl_table_demand(simp, dataname = "dataAggregateSupplyDemand", latex = TRUE)
+hl_table_supply(simp, dataname = "dataAggregateSupplyDemand", latex = TRUE)
+l <- futile.logger::flog.threshold(futile.logger::INFO, name='craftyr')
+@
+
+% Marginal utilities need to be extracted from log data using a python script...
+%\subsubsection{Marginal Utilities}
+%\label{marginalUtilities}
+%<<marginalUtilities, fig.height=4>>=
+%hl_marginalutilities(simp)
+%@
+
+%\subsubsection{Marginal per-cell Utilities}
+%\label{marginalPerCellUtilities}
+%<<marginalPerCellUtilities, fig.height=4>>=
+%hl_normalisedutilities(simp, filenamemarginalutils = paste(simp$dirs$output$rdata, simp$sim$id,
+%				"MarginalUtilitiesPerCell.csv", sep="/")) 
+%@
+
+\newpage
+\subsubsection{AFT Composition}
+\label{aftCompLines}
+<<aftCompLines3, fig.height=4, anchor="figure">>=
+#hl_aftcomposition(simp, dataname = "dataAgg")
+hl_aggregate_aftcompositions(simp, dataname = "dataAggregateAFTComposition", includeunmanaged = TRUE)
+@
+
+\newpage
+\subsubsection{AFT Production}
+\label{aftProductionLines}
+<<aftProductionLines3, fig.height=4, anchor="figure">>=
+hl_serviceproduction(simp, dataname = "dataAgg", facet_ncol=3, normaliseByAftNumber = TRUE)
+@
+
+\subsubsection{AFT Competitiveness}
+\label{aftCompetitLines}
+<<aftCompetitLines, fig.height=4, anchor="figure">>=
+hl_aggregate_aftcompetitiveness(simp, dataname = "dataAggregateAFTCompetitiveness")
+# In case there is no explicit competitiveness data output:
+# hl_competitiveness(simp, dataname = "dataAgg")
+@
+
+
+\newpage
+\subsubsection{Pre-Allocation Competitiveness Distributions: Overview}
+\label{preAllocCompetitivenessLines}
+<<preAllocCompetitiveness, fig.cap = "Pre-Allocation Competitiveness">>=
+hl_competitiveness_prealloc(simp, dataname = "csv_preAllocTable", 
+	maxcompetitiveness = "90%", numbins = 15)
+@
+
+\subsubsection{Pre-Allocation Competitiveness Distributions}
+<<compdist>>=
+hl_competitiveness_preallocPerAft(simp, dataname = "csv_preAllocTable",  facet_ncol = 4,
+		maxcompetitiveness = "100%", numbins = 40, title = "Pre-Allocation Competitiveness", 
+		setfigdims = FALSE, checkexists=FALSE, ggplotaddon = ggplot2::theme(axis.text.x=element_text(angle=90)))
+@
+
+\newpage
+\subsubsection{AFT TakeOvers (GU + GI)}
+<<aftTakeOvers, fig.height=4, fig.cap="Transitions between AFTs because of take overs (giving in + allocation). Straight lines represent a transition from an agent of a specific AFT to a new agent applying the same type of land use. Ends of arrows are coloured according to the AFT they lead to. Furthermore, arrows summerise transitions of years in between the shown ones. Therefore, the number of transitions is potentially higher.">>=
+
+hl_takeovers_all(simp, landusedataname = "csv_LandUseIndex_rbinded",  dataname = "dataAgg",
+	tickinterval=5, grouping = c("Runid"))
+@
+
+\subsubsection{AFT Giving In TakeOvers}
+<<aftGivingInTakeOvers, fig.height=4, fig.cap="Transitions between AFTs because of take overs (giving in). Straight lines represent a transition from an agent of a specific AFT to a new agent applying the same type of land use. Ends of arrows are coloured according to the AFT they lead to. Furthermore, arrows summerise transitions of years in between the shown ones. Therefore, the number of transitions is potentially higher.">>=
+hl_takeovers(simp, dataname = "dataAgg", aftnames = simp$mdata$aftNames[-1], datanametakeovers="dataTakeOvers")
+@
+
+\newpage
+
+\subsubsection{AFT Giving In TakeOver Fluctuations}
+<<aftTakeOverFluctuations, fig.height=4, fig.cap = "Fluctations in numbers of AFT only due to take overs.">>=
+hl_afttakeoverfluctuations(simp, dataname = "dataAgg", datanametakeovers="dataTakeOvers")
+@
+
+\subsubsection{AFT Giving In Statistics}
+<<aftGiStatistics, message=TRUE, error=TRUE, warning=TRUE, fig.height=4, fig.cap = "Distribution of number of searches during giving in.">>=
+hl_gistatistics_singleRegion(simp, dataname = "csv_aggregateGiStatistics", 
+        regions = simp$sim$regions, facet_ncol = 2, numboxes = 10, numberrange = c(-Inf,Inf))
+@
+
+\newpage
+\subsection{Institutional Action}
+\subsubsection{Actions and Effects}
+<<instAction, fig.cap = "Institutional action">>=
+convert_aggregate_demand(simp, demanddataname="csv_aggregated_demand")
+convert_aggregate_supply(simp, celldataname = "dataAgg")
+
+# store percental supply (regarding demand)
+input_tools_load(simp, objectName="csv_aggregated_demand")
+input_tools_load(simp, objectName="csv_aggregated_supply")
+colnames(csv_aggregated_demand)[colnames(csv_aggregated_demand) == "variable"] <- "Service"
+dataAggregatedPercentalSupply <- merge(csv_aggregated_supply, csv_aggregated_demand)
+dataAggregatedPercentalSupply$PercentalSupply <- 100 * dataAggregatedPercentalSupply$TotalProduction / 
+		dataAggregatedPercentalSupply$Demand
+dataAggregatedPercentalSupply$Region <- paste(dataAggregatedPercentalSupply$Region, "Percentage Supply")
+input_tools_save(simp, "dataAggregatedPercentalSupply")
+
+prefixes <- c("RegionalSubsidyPa", "GlobalSubsidyPa")
+aftcolors <- setNames(simp$colours$AFT,
+		simp$mdata$aftNames[match(names(simp$colours$AFT), names(simp$mdata$aftNames))]) 
+aftcolors <- aftcolors[!is.na(names(aftcolors))]
+
+
+actionfillcolours <- setNames(rep(aftcolors, times=length(prefixes)),
+		paste(rep(prefixes, each=length(aftcolors)), gsub("_", "",names(aftcolors)), sep="_"))
+
+visualise_actions(simp, actiondata = "dataActions",
+	monitordata = "dataAggregatedPercentalSupply",
+	monitorcolours = simp$colours$Service,
+	colour_column = "Service",
+	y_column_measure = "PercentalSupply",
+	actionfillcolours = c("DoNothing" = "grey", 
+			actionfillcolours))
+@
+
+\newpage
+\subsection{Regional Data}
+\subsubsection{Regional Demand and Supply}
+<<regionaldemandsupply, fig.height=3.5>>=
+hl_regions_demandandsupply(simp, dataname = "dataAgg", runid = simp$sim$id, facet_ncol = 4)
+@
+
+\newpage
+\subsubsection{Regional AFT Composition}
+<<regionalafts, fig.height=3.5>>=
+hl_regions_aftcomposition(simp, dataname = "dataAgg", facet_ncol = 4)
+@
+
+\subsubsection{Regional AFT Competitiveness}
+<<regionalcomp>>=
+hl_competitivenessPerRegion(simp, dataname = "dataAgg")
+@
+
+\subsubsection{Regional AFT Connectedness}
+<<regionalconnect, fig.height=3.5>>=
+simp$sim$filepartorder	<- c("regions", "D", "datatype")
+hl_connectedness(simp, dataname = "csv_aggregated_connectivity", 
+		datatype = "LandUseConnectivity", aftcolumns = simp$mdata$aftNames[-1],
+		percent = NULL)
+@
+
+\newpage
+\subsection{Map Data}
+\subsubsection{AFT Maps}
+\label{aftmaps}
+<<mapsprolog>>=
+ffn <- craftyr::output_tools_getDefaultFilename(simp, paste(simp$fig$maptitle, ".png", sep=""))
+@
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=\textwidth]{\Sexpr{paste(simp$dirs$output$figures,"raster", ffn, sep="/")}}
+\caption{AFT map}
+\end{center}
+\end{figure}
+
+<<mapsprologB>>=
+ffn <- craftyr::output_tools_getDefaultFilename(simp, paste(simp$fig$maptitle, "B.png", sep=""))
+@
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=\textwidth]{\Sexpr{paste(simp$dirs$output$figures,"raster", ffn, sep="/")}}
+\caption{AFT map}
+\end{center}
+\end{figure}
+
+%\subsubsection{Cell Volatility}
+%\subsubsection{Adoption Cereal: Raster}
+%\subsubsection{Adoption Meat: Raster}
+%\subsubsection{AFT composition: Evolution}
+%\subsubsection{Adoption: Evolution}
+%\subsubsection{Productivity: Evolution}
+%\subsubsection{Productivity per Landmanager}
+%\subsubsection{Effective Capital Levels}
+
+\section{Observations}
+\begin{itemize}
+  \item -
+\end{itemize}  
+
+
+% This line must not be copied or deleted!
+\end{document}

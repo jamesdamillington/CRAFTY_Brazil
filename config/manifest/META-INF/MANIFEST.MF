@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Class-Path: . CRAFTY_lib/rt.jar CRAFTY_lib/CRAFTY-CoBRA.jar CRAFTY_lib/jsse.
+ jar CRAFTY_lib/jce.jar CRAFTY_lib/charsets.jar CRAFTY_lib/jfr.jar CRAFTY_
+ lib/access-bridge-64.jar CRAFTY_lib/cldrdata.jar CRAFTY_lib/dnsns.jar 
+ CRAFTY_lib/jaccess.jar CRAFTY_lib/jfxrt.jar CRAFTY_lib/localedata.jar 
+ CRAFTY_lib/nashorn.jar CRAFTY_lib/sunec.jar CRAFTY_lib/sunjce_provider.jar 
+ CRAFTY_lib/sunmscapi.jar CRAFTY_lib/sunpkcs11.jar CRAFTY_lib/zipfs.jar 
+ CRAFTY_lib/junit.jar CRAFTY_lib/org.hamcrest.core_1.3.0.v201303031735.ja
+ r CRAFTY_lib/collections-generic-4.01.jar CRAFTY_lib/colt-1.2.0.jar 
+ CRAFTY_lib/commons-cli-1.2.jar CRAFTY_lib/commons-math3-3.2.jar CRAFTY_lib/
+ gt-api-9.0.jar CRAFTY_lib/gt-data-9.0.jar CRAFTY_lib/gt-epsg-wkt-9.0.ja
+ r CRAFTY_lib/gt-main-9.0.jar CRAFTY_lib/gt-metadata-9.0.jar CRAFTY_lib/g
+ t-opengis-9.0.jar CRAFTY_lib/gt-referencing-9.0.jar CRAFTY_lib/gt-shape
+ file-9.0.jar CRAFTY_lib/javacsv.jar CRAFTY_lib/javaRasters.jar CRAFTY_li
+ b/jchart2d-3.2.2.jar CRAFTY_lib/jide-oss-2.9.7.jar CRAFTY_lib/JRI.jar 
+ CRAFTY_lib/jscience.jar CRAFTY_lib/jts-1.13.jar CRAFTY_lib/jung-algorithm
+ s-2.0.1.jar CRAFTY_lib/jung-api-2.0.1.jar CRAFTY_lib/jung-graph-impl-2.
+ 0.1.jar CRAFTY_lib/jung-io-2.0.1.jar CRAFTY_lib/log4j-1.2.17.jar CRAFTY_
+ lib/ModellingUtilities.jar CRAFTY_lib/monte-cc.jar CRAFTY_lib/MORe.jar 
+ CRAFTY_lib/ParMa.jar CRAFTY_lib/repast.simphony.bin_and_src.jar CRAFTY_lib/saf.core.runtime.jar CRAFTY_l
+ ib/simple-xml-2.7.1.jar CRAFTY_lib/stax-api-1.0.1.jar CRAFTY_lib/LARA_Base.jar CRAFTY_lib/units-
+ 0.01.jar CRAFTY_lib/Uranus.jar CRAFTY_lib/vecmath-1.3.1.jar CRAFTY_lib/w
+ stx-asl-3.2.6.jar CRAFTY_lib/xmlgraphics-commons-1.3.1.jar CRAFTY_lib/javafx7-0.1.0.jar 
+ CRAFTY_lib/guava-12.0.1.jar CRAFTY_lib/jai_core.jar CRAFTY_lib/mpi.jar 
+ CRAFTY_lib/LARA_Toolbox.jar CRAFTY_lib/jep-2.23.jar
+Main-Class: org.volante.abm.serialization.ModelRunner

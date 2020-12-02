@@ -1,0 +1,119 @@
+<bTypes>
+	<bType label="Cognitor" serialID="1" class="org.volante.abm.agent.bt.CognitiveBT">
+	
+		<triggers>
+		</triggers>
+		
+		<agentProperty name="EXPERIENCE">10</agentProperty>
+		
+		<laraAgentConfigurator class="de.cesr.lara.toolbox.config.xml.LXmlAgentConfigurator">
+			<bofile>./pas/frselectionpas.xml</bofile>
+			
+			<preferenceWeight pref="Competitiveness">1.0</preferenceWeight>
+			<preferenceWeight pref="SocialApproval">1.0</preferenceWeight>
+			<preferenceWeight pref="NeighbourApproval">1.0</preferenceWeight>
+			
+			<preprocessorConfigurator>
+				<selectorEntry>
+					<dConfig>FrSelection</dConfig>
+					<selector class="org.volante.abm.lara.FrCheckDecisionModeSelector">
+						<imitatingDeciderFactory class="org.volante.abm.lara.decider.CapitalBasedImitatingFrDeciderFactory">
+							<diffFunction class="com.moseph.modelutils.curve.PowerCurve" exponent="2.0">
+							</diffFunction>
+						</imitatingDeciderFactory>
+					</selector>
+				</selectorEntry>
+				<selectorEntry>
+					<dConfig>InnovationAdoption</dConfig>
+					<selector class="org.volante.abm.lara.FrCheckDecisionModeSelector">
+						<imitatingDeciderFactory class="org.volante.abm.lara.decider.CapitalBasedImitatingFrDeciderFactory">
+							<diffFunction class="com.moseph.modelutils.curve.PowerCurve" exponent="2.0">
+							</diffFunction>
+						</imitatingDeciderFactory>
+					</selector>
+				</selectorEntry>
+
+				<collectorEntry>
+					<dConfig>FrSelection</dConfig>
+					<collector class="de.cesr.lara.components.preprocessor.impl.LContributingBoCollector">
+					</collector>
+				</collectorEntry>				
+				<collectorEntry>
+					<dConfig>InnovationAdoption</dConfig>
+					<collector class="de.cesr.lara.components.preprocessor.impl.LContributingBoCollector">
+					</collector>
+				</collectorEntry>
+				
+				<checkerEntry>
+					<dConfig></dConfig>
+					<checker class="de.cesr.lara.components.preprocessor.impl.LDelegatingBoPreselector">
+					</checker>
+				</checkerEntry>
+				
+				<boUpdaterEntry>
+					<dConfig></dConfig>
+					<updater class="de.cesr.lara.components.preprocessor.impl.LDefaultBOUpdater">
+					</updater>
+				</boUpdaterEntry>
+				
+				<prefUpdaterEntry>
+					<dConfig></dConfig>
+					<updater class="de.cesr.lara.components.preprocessor.impl.LPseudoPrefereceUpdater">
+					</updater>
+				</prefUpdaterEntry>
+			</preprocessorConfigurator>
+		</laraAgentConfigurator>
+	</bType>
+	
+	<bType label="Innovator" serialID="2" class="org.volante.abm.agent.bt.InnovativeCognitiveBT">
+		<triggers>
+			<trigger class="org.volante.abm.decision.trigger.PositiveDT" id="InnovationTrigger">
+				<dcId>Innovation</dcId>
+			</trigger>
+		</triggers>
+		<laraAgentConfigurator class="de.cesr.lara.toolbox.config.xml.LXmlAgentConfigurator">
+			<bofile>./pas/frselectionpas.xml</bofile>
+			
+			<preprocessorConfigurator>
+				<selectorEntry>
+					<dConfig>FrSelection</dConfig>
+					<selector class="org.volante.abm.lara.FrCheckDecisionModeSelector">
+						<imitatingDeciderFactory class="org.volante.abm.lara.decider.CapitalBasedImitatingFrDeciderFactory">
+							<diffFunction class="com.moseph.modelutils.curve.PowerCurve" exponent="2.0">
+							</diffFunction>
+						</imitatingDeciderFactory>
+					</selector>
+				</selectorEntry>
+				<selectorEntry>
+					<dConfig>InnovationAdoption</dConfig>
+					<selector class="de.cesr.lara.components.preprocessor.impl.LDeliberativeDecisionModeSelector">
+					</selector>
+				</selectorEntry>
+				
+				<collectorEntry>
+					<dConfig>InnovationAdoption</dConfig>
+					<collector class="de.cesr.lara.components.preprocessor.impl.LContributingBoCollector">
+					</collector>
+				</collectorEntry>
+
+				<checkerEntry>
+					<dConfig></dConfig>
+					<checker class="de.cesr.lara.components.preprocessor.impl.LDelegatingBoPreselector">
+					</checker>
+				</checkerEntry>
+				
+				<boUpdaterEntry>
+					<dConfig></dConfig>
+					<updater class="de.cesr.lara.components.preprocessor.impl.LDefaultBOUpdater">
+					</updater>
+				</boUpdaterEntry>
+				
+				<prefUpdaterEntry>
+					<dConfig></dConfig>
+					<updater class="de.cesr.lara.components.preprocessor.impl.LPseudoPrefereceUpdater">
+					</updater>
+				</prefUpdaterEntry>
+			</preprocessorConfigurator>
+		</laraAgentConfigurator>
+	</bType>
+</bTypes>

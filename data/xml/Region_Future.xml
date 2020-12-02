@@ -1,0 +1,184 @@
+<region id="10states">
+	<cellInitialiserFile>xml/CSVCells.xml</cellInitialiserFile>
+	
+	<!-- This defines an allocation model inline -->
+	<allocation class="org.volante.abm.example.GiveUpGiveInAllocationModel" numCells="10" numTakeovers="10000" probabilityExponent="0" ></allocation>
+
+    <competition class="org.volante.abm.example.CurveCompetitivenessModel">
+        <curve service="Soy">
+            <curve class="com.moseph.modelutils.curve.LinearFunction" a="0.0" b="3.0" />
+        </curve>
+        <curve service="Maize">
+            <curve class="com.moseph.modelutils.curve.LinearFunction" a="0.0" b="3.0" />
+        </curve>
+        <curve service="SoyMaize">
+            <curve class="com.moseph.modelutils.curve.LinearFunction" a="0.0" b="3.0" />
+        </curve>
+        <curve service="Nature">
+            <curve class="com.moseph.modelutils.curve.LinearFunction" a="0.0" b="3.0" />
+        </curve>
+        <curve service="Other Agriculture">
+            <curve class="com.moseph.modelutils.curve.LinearFunction" a="0.0" b="3.0" />
+        </curve>
+        <curve service="Other">
+            <curve class="com.moseph.modelutils.curve.LinearFunction" a="0.0" b="3.0" />
+        </curve>
+        <curve service="Pasture">
+            <curve class="com.moseph.modelutils.curve.LinearFunction" a="0.0" b="3.0" />
+        </curve>
+    </competition>
+
+<updater class="org.volante.abm.update.AgentTypeUpdater" agentColumn="FR">
+             
+        <agentUpdate agent="FR5">
+            <function class="org.volante.abm.update.ProportionalChangeFunction" capitalName="Nature Access" top="0.5" bottom="0.2" change="0.99"/>
+        </agentUpdate>
+		<agentUpdate agent="FR4">
+            <function class="org.volante.abm.update.NatureChangeFunction2" capitalName="Nature" top="0.9" bottom="0.8" change="0.01"/>
+        </agentUpdate>
+<agentUpdate agent="Lazy FR">
+            <function class="org.volante.abm.update.NatureChangeFunction2" capitalName="Nature" top="0.9" bottom="0.8" change="0.01"/>
+        </agentUpdate>
+        <agentUpdate agent="FR8">
+            <function class="org.volante.abm.update.NatureChangeFunction" capitalName="Nature" top="0.1" bottom="0.8" change="0.01"/>
+        </agentUpdate>
+        <agentUpdate agent="FR6">
+            <function class="org.volante.abm.update.NatureChangeFunction" capitalName="Nature" top="0.1" bottom="0.8" change="0.05"/>
+        </agentUpdate>
+		<agentUpdate agent="FR3">
+            <function class="org.volante.abm.update.NatureChangeFunction" capitalName="Nature" top="0.1" bottom="0.8" change="0.1"/>
+        </agentUpdate>
+		<agentUpdate agent="FR2">
+            <function class="org.volante.abm.update.NatureChangeFunction" capitalName="Nature" top="0.1" bottom="0.8" change="0.1"/>
+        </agentUpdate>
+		<agentUpdate agent="FR1">
+            <function class="org.volante.abm.update.NatureChangeFunction" capitalName="Nature" top="0.1" bottom="0.8" change="0.1"/>
+        </agentUpdate>
+        <agentUpdate agent="FR3">
+            <function class="org.volante.abm.update.SoyTrapFunction" capitalName="none" top="0.9" bottom="0.8" change="0.0"/>
+        </agentUpdate>
+		<agentUpdate agent="FR2">
+            <function class="org.volante.abm.update.SoyTrapFunction" capitalName="none" top="0.9" bottom="0.8" change="0.0"/>
+        </agentUpdate>
+        		<agentUpdate agent="FR8">
+            <function class="org.volante.abm.update.SoyTrapFunction" capitalName="none" top="0.9" bottom="0.8" change="0.0"/>
+        </agentUpdate>
+		<agentUpdate agent="FR1">
+            <function class="org.volante.abm.update.SoyTrapFunction" capitalName="none" top="0.9" bottom="0.8" change="0.0"/>
+        </agentUpdate>
+        <agentUpdate agent="FR6">
+            <function class="org.volante.abm.update.SoyTrapFunction" capitalName="none" top="0.9" bottom="0.8" change="0.0"/>
+        </agentUpdate>
+        <agentUpdate agent="FR1">
+            <function class="org.volante.abm.update.DoubleCroppingPropagation" capitalName="Development" top="0.8" bottom="0.0" change="0.2"/>
+        </agentUpdate>
+        <agentUpdate agent="FR2">
+            <function class="org.volante.abm.update.DoubleCroppingPropagation" capitalName="Development" top="0.8" bottom="0.0" change="0.2"/>
+        </agentUpdate>
+         <agentUpdate agent="FR1">
+            <function class="org.volante.abm.update.NatureChangeFunction2" capitalName="Land Price" top="1" bottom="1" change="0.1"/>
+        </agentUpdate>
+        <agentUpdate agent="FR2">
+            <function class="org.volante.abm.update.NatureChangeFunction2" capitalName="Land Price" top="1" bottom="1" change="0.1"/>
+        </agentUpdate>
+        <agentUpdate agent="FR3">
+            <function class="org.volante.abm.update.NatureChangeFunction2" capitalName="Land Price" top="1" bottom="1" change="0.1"/>
+        </agentUpdate>
+        <agentUpdate agent="FR6">
+            <function class="org.volante.abm.update.NatureChangeFunction2" capitalName="Land Price" top="1" bottom="1" change="0.1"/>
+        </agentUpdate>
+        <agentUpdate agent="FR8">
+            <function class="org.volante.abm.update.NatureChangeFunction2" capitalName="Land Price" top="1" bottom="1" change="0.1"/>
+        </agentUpdate>
+        <agentUpdate agent="FR4">
+            <function class="org.volante.abm.update.AgriPropagation" capitalName="Agri Infrastructure" top="1" bottom="0.0" change="1"/>
+        </agentUpdate>
+        <agentUpdate agent="FR5">
+            <function class="org.volante.abm.update.AgriPropagation" capitalName="Agri Infrastructure" top="1" bottom="0.0" change="1"/>
+        </agentUpdate>
+        <agentUpdate agent="FR6">
+            <function class="org.volante.abm.update.AgriPropagation" capitalName="Agri Infrastructure" top="1" bottom="0.0" change="1"/>
+        </agentUpdate>
+        <agentUpdate agent="FR7">
+            <function class="org.volante.abm.update.AgriPropagation" capitalName="Agri Infrastructure" top="1" bottom="0.0" change="1"/>
+        </agentUpdate>
+        <agentUpdate agent="FR8">
+            <function class="org.volante.abm.update.AgriPropagation" capitalName="Agri Infrastructure" top="1" bottom="0.0" change="1"/>
+        </agentUpdate>
+        <agentUpdate agent="FR1">
+            <function class="org.volante.abm.update.OAgriPropagation" capitalName="OAgri Infrastructure" top="1" bottom="0.0" change="1"/>
+        </agentUpdate>
+        <agentUpdate agent="FR2">
+            <function class="org.volante.abm.update.OAgriPropagation" capitalName="OAgri Infrastructure" top="1" bottom="0.0" change="1"/>
+        </agentUpdate>
+        <agentUpdate agent="FR3">
+            <function class="org.volante.abm.update.OAgriPropagation" capitalName="OAgri Infrastructure" top="1" bottom="0.0" change="1"/>
+        </agentUpdate>
+        <agentUpdate agent="FR4">
+            <function class="org.volante.abm.update.OAgriPropagation" capitalName="OAgri Infrastructure" top="1" bottom="0.0" change="1"/>
+        </agentUpdate>
+        <agentUpdate agent="FR5">
+            <function class="org.volante.abm.update.OAgriPropagation" capitalName="OAgri Infrastructure" top="1" bottom="0.0" change="1"/>
+        </agentUpdate>
+        <agentUpdate agent="FR7">
+            <function class="org.volante.abm.update.OAgriPropagation" capitalName="OAgri Infrastructure" top="1" bottom="0.0" change="1"/>
+        </agentUpdate>
+        <agentUpdate agent="FR8">
+            <function class="org.volante.abm.update.OAgriPropagation" capitalName="OAgri Infrastructure" top="1" bottom="0.0" change="1"/>
+        </agentUpdate>
+       
+    </updater>
+	    <updater class="org.volante.abm.update.CSVCapitalUpdater" X_COL="X" Y_COL="Y" yearInFilename="true" reapplyPreviousFile="true">
+<!-- for constclim move closing to before </updater>	<csvFile year="2015">csv/ClimateRCP26_DC_update2015.csv</csvFile>
+		<csvFile year="2016">csv/ClimateRCP85_DC_update2016.csv</csvFile>
+		<csvFile year="2017">csv/ClimateRCP85_DC_update2017.csv</csvFile>
+		<csvFile year="2018">csv/ClimateRCP85_DC_update2018.csv</csvFile>
+		<csvFile year="2019">csv/ClimateRCP85_DC_update2019.csv</csvFile>
+		<csvFile year="2020">csv/ClimateRCP85_DC_update2020.csv</csvFile>
+		<csvFile year="2021">csv/ClimateRCP85_DC_update2021.csv</csvFile>
+		<csvFile year="2022">csv/ClimateRCP85_DC_update2022.csv</csvFile>
+		<csvFile year="2023">csv/ClimateRCP85_DC_update2023.csv</csvFile>
+		<csvFile year="2024">csv/ClimateRCP85_DC_update2024.csv</csvFile>
+		<csvFile year="2025">csv/ClimateRCP85_DC_update2025.csv</csvFile>
+		<csvFile year="2026">csv/ClimateRCP85_DC_update2026.csv</csvFile>
+		<csvFile year="2027">csv/ClimateRCP85_DC_update2027.csv</csvFile>
+		<csvFile year="2028">csv/ClimateRCP85_DC_update2028.csv</csvFile>
+		<csvFile year="2029">csv/ClimateRCP85_DC_update2029.csv</csvFile>
+		<csvFile year="2030">csv/ClimateRCP85_DC_update2030.csv</csvFile>	
+		<csvFile year="2031">csv/ClimateRCP85_DC_update2031.csv</csvFile>	
+		<csvFile year="2032">csv/ClimateRCP85_DC_update2032.csv</csvFile>	
+		<csvFile year="2033">csv/ClimateRCP85_DC_update2033.csv</csvFile>	
+		<csvFile year="2034">csv/ClimateRCP85_DC_update2034.csv</csvFile>	
+		<csvFile year="2035">csv/ClimateRCP85_DC_update2035.csv</csvFile>	
+		<csvFile year="2036">csv/ClimateRCP85_DC_update2036.csv</csvFile>	
+		<csvFile year="2037">csv/ClimateRCP85_DC_update2037.csv</csvFile>	
+		<csvFile year="2038">csv/ClimateRCP85_DC_update2038.csv</csvFile>	
+		<csvFile year="2039">csv/ClimateRCP85_DC_update2039.csv</csvFile>	
+		<csvFile year="2040">csv/ClimateRCP85_DC_update2040.csv</csvFile>	
+		<csvFile year="2041">csv/ClimateRCP85_DC_update2041.csv</csvFile>
+		<csvFile year="2042">csv/ClimateRCP85_DC_update2042.csv</csvFile>
+		<csvFile year="2043">csv/ClimateRCP85_DC_update2043.csv</csvFile>
+		<csvFile year="2044">csv/ClimateRCP85_DC_update2044.csv</csvFile>
+		<csvFile year="2045">csv/ClimateRCP85_DC_update2045.csv</csvFile>
+		<csvFile year="2046">csv/ClimateRCP85_DC_update2046.csv</csvFile>
+		<csvFile year="2047">csv/ClimateRCP85_DC_update2047.csv</csvFile>
+		<csvFile year="2048">csv/ClimateRCP85_DC_update2048.csv</csvFile>
+		<csvFile year="2049">csv/ClimateRCP85_DC_update2049.csv</csvFile>
+		<csvFile year="2050">csv/ClimateRCP85_DC_update2050.csv</csvFile> -->	
+        </updater>  
+        
+        
+        
+	<demand class="org.volante.abm.example.RegionalMarketPseudoWorldDemandModel" demandCSV="csv/Demand_AgriProj1relDP.csv"/>
+	
+	<socialNetworkParamFile></socialNetworkParamFile>
+	
+	<frFile>xml/FunctionalRoles.xml</frFile>
+	<btFile>xml/BehaviouralTypes.xml</btFile>
+	
+	<regionalLaraModel>
+		<Boolean param="de.cesr.lara.components.param.LBasicPa:EVENTBUS_FORCE_SEQUENTIAL">true</Boolean>
+		<String param="de.cesr.lara.toolbox.param.LXmlConfigPa:XML_PATH_PREFERENCES">xml/LaraPreferences.xml</String>
+		<String param="de.cesr.lara.toolbox.param.LXmlConfigPa:XML_PATH_DCONFIG">xml/LaraDecisionConfigurations.xml</String>
+	</regionalLaraModel>
+	</region>

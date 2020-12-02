@@ -1,0 +1,86 @@
+<region id="10states">
+	<cellInitialiserFile>xml/CSVCells.xml</cellInitialiserFile>
+	
+	<!-- This defines an allocation model inline -->
+	<allocation class="org.volante.abm.example.GiveUpGiveInAllocationModel" numCells="5" numTakeovers="2000" probabilityExponent="0" ></allocation>
+
+    <competition class="org.volante.abm.example.CurveCompetitivenessModel">
+        <curve service="Soy">
+            <curve class="com.moseph.modelutils.curve.LinearFunction" a="0.0" b="3.0" />
+        </curve>
+        <curve service="Maize">
+            <curve class="com.moseph.modelutils.curve.LinearFunction" a="0.0" b="3.0" />
+        </curve>
+        <curve service="SoyMaize">
+            <curve class="com.moseph.modelutils.curve.LinearFunction" a="0.0" b="3.0" />
+        </curve>
+        <curve service="Nature">
+            <curve class="com.moseph.modelutils.curve.LinearFunction" a="0.0" b="3.0" />
+        </curve>
+        <curve service="Other Agriculture">
+            <curve class="com.moseph.modelutils.curve.LinearFunction" a="0.0" b="3.0" />
+        </curve>
+        <curve service="Other">
+            <curve class="com.moseph.modelutils.curve.LinearFunction" a="0.0" b="3.0" />
+        </curve>
+        <curve service="Pasture">
+            <curve class="com.moseph.modelutils.curve.LinearFunction" a="0.0" b="3.0" />
+        </curve>
+    </competition>
+
+ <updater class="org.volante.abm.update.AgentTypeUpdater" agentColumn="Agent"> 
+             
+        <csvFile>csv/FRupdates.csv</csvFile>
+
+        
+ </updater> 
+ 
+<updater class="org.volante.abm.update.CSVCapitalUpdater" X_COL="X" Y_COL="Y" yearInFilename="true" reapplyPreviousFile="true">
+		<csvFile year="2002">csv/calibration_2020-04-18_update2002.csv</csvFile>
+		<csvFile year="2003">csv/calibration_2020-04-18_update2003.csv</csvFile>
+		<csvFile year="2004">csv/calibration_2020-04-18_update2004.csv</csvFile>
+		<csvFile year="2005">csv/calibration_2020-04-18_update2005.csv</csvFile>
+		<csvFile year="2006">csv/calibration_2020-04-18_update2006.csv</csvFile>
+		<csvFile year="2007">csv/calibration_2020-04-18_update2007.csv</csvFile>
+		<csvFile year="2008">csv/calibration_2020-04-18_update2008.csv</csvFile>
+		<csvFile year="2009">csv/calibration_2020-04-18_update2009.csv</csvFile>
+		<csvFile year="2010">csv/calibration_2020-04-18_update2010.csv</csvFile>
+		<csvFile year="2011">csv/calibration_2020-04-18_update2011.csv</csvFile>
+		<csvFile year="2012">csv/calibration_2020-04-18_update2012.csv</csvFile>
+		<csvFile year="2013">csv/calibration_2020-04-18_update2013.csv</csvFile>
+		<csvFile year="2014">csv/calibration_2020-04-18_update2014.csv</csvFile>
+		<csvFile year="2015">csv/calibration_2020-04-18_update2015.csv</csvFile>
+		<csvFile year="2016">csv/calibration_2020-04-18_update2016.csv</csvFile>
+		<csvFile year="2017">csv/calibration_2020-04-18_update2017.csv</csvFile>
+		<csvFile year="2018">csv/calibration_2020-04-18_update2018.csv</csvFile>  
+<!--	 	<csvFile year="2019">csv/scenario_rcp85_update2019.csv</csvFile>
+		<csvFile year="2020">csv/scenario_rcp85_update2020.csv</csvFile>
+		<csvFile year="2021">csv/scenario_rcp85_update2021.csv</csvFile>
+		<csvFile year="2022">csv/scenario_rcp85_update2022.csv</csvFile>
+		<csvFile year="2023">csv/scenario_rcp85_update2023.csv</csvFile>
+		<csvFile year="2024">csv/scenario_rcp85_update2024.csv</csvFile>
+		<csvFile year="2025">csv/scenario_rcp85_update2025.csv</csvFile>
+		<csvFile year="2026">csv/scenario_rcp85_update2026.csv</csvFile>
+		<csvFile year="2027">csv/scenario_rcp85_update2027.csv</csvFile>
+		<csvFile year="2028">csv/scenario_rcp85_update2028.csv</csvFile>
+		<csvFile year="2029">csv/scenario_rcp85_update2029.csv</csvFile> 
+		<csvFile year="2030">csv/scenario_rcp85_update2030.csv</csvFile> 
+		<csvFile year="2031">csv/scenario_rcp85_update2031.csv</csvFile> 
+		<csvFile year="2032">csv/scenario_rcp85_update2032.csv</csvFile> 
+		<csvFile year="2033">csv/scenario_rcp85_update2033.csv</csvFile> 
+		<csvFile year="2034">csv/scenario_rcp85_update2034.csv</csvFile> 
+		<csvFile year="2035">csv/scenario_rcp85_update2035.csv</csvFile> -->
+</updater>
+	<demand class="org.volante.abm.example.RegionalMarketPseudoWorldDemandModel" demandCSV="csv/Demand_2001-2035_Const_Nat072.csv"/>
+	
+	<socialNetworkParamFile></socialNetworkParamFile>
+	
+	<frFile>xml/FunctionalRoles.xml</frFile>
+	<btFile>xml/BehaviouralTypes.xml</btFile>
+	
+	<regionalLaraModel>
+		<Boolean param="de.cesr.lara.components.param.LBasicPa:EVENTBUS_FORCE_SEQUENTIAL">true</Boolean>
+		<String param="de.cesr.lara.toolbox.param.LXmlConfigPa:XML_PATH_PREFERENCES">xml/LaraPreferences.xml</String>
+		<String param="de.cesr.lara.toolbox.param.LXmlConfigPa:XML_PATH_DCONFIG">xml/LaraDecisionConfigurations.xml</String>
+	</regionalLaraModel>
+	</region>

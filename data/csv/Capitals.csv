@@ -1,0 +1,18 @@
+Name,Index
+Moisture,0
+Nature,1
+Human,2
+Development,3
+Port Access,4
+Economic,5
+Nature Access,6
+Growing Season,7
+Other Agriculture,8
+Other,9
+Soy Protection,10
+Land Price,11
+Maize Protection,12
+Pasture Protection,13
+OAgri Protection,14
+Agri Infrastructure,15
+OAgri Infrastructure,16

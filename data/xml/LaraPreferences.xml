@@ -1,0 +1,5 @@
+<preferenceList class="de.cesr.lara.toolbox.config.xml.LXmlPreferenceLoader">
+	<preference>Competitiveness</preference>
+	<preference>SocialApproval</preference>
+	<preference>NeighbourApproval</preference>
+</preferenceList>

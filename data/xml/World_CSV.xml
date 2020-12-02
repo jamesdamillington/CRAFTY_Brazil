@@ -1,0 +1,5 @@
+<world idColumn="ID" competitionColumn="Competition" allocationColumn="Allocation" demandColumn="Demand"
+ btColumn = "Behavioural Types" frColumn="Functional Roles" cellColumn="Cell Initialisers" 
+ agentColumn="Agent Initialisers" laraModelColumn="LARA Model">
+	<regionCSV>csv/World.csv</regionCSV>
+</world>

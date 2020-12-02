@@ -1,0 +1,42 @@
+<functionalRoles>
+	<fRole class="org.volante.abm.agent.fr.DefaultFR" label="FR1" serialID="0"
+	givingUpMean="0.001" givingInMean="0">
+		<production class="org.volante.abm.example.SimpleProductionModel"
+			csvFile="csv/FR1_calibration_2020-02-03e.csv" />
+	</fRole>
+		<fRole class="org.volante.abm.agent.fr.DefaultFR" label="FR2" serialID="1"
+	givingUpMean="0.001" givingInMean="0">
+		<production class="org.volante.abm.example.SimpleProductionModel"
+			csvFile="csv/FR2_calibration_2020-02-03e.csv" />
+	</fRole>
+		<fRole class="org.volante.abm.agent.fr.DefaultFR" label="FR3" serialID="2"
+	givingUpMean="0.001" givingInMean="0">
+		<production class="org.volante.abm.example.SimpleProductionModel"
+			csvFile="csv/FR3_calibration_2020-02-15c.csv" />
+	</fRole>
+		<fRole class="org.volante.abm.agent.fr.DefaultFR" label="FR4" serialID="3"
+	givingUpMean="0" givingInMean="0">
+		<production class="org.volante.abm.example.SimpleProductionModel"
+			csvFile="csv/FR4_calibration_2020-02-06.csv" />
+	</fRole>
+		<fRole class="org.volante.abm.agent.fr.DefaultFR" label="FR5" serialID="4"
+	givingUpMean="0" givingInMean="0">
+		<production class="org.volante.abm.example.SimpleProductionModel"
+			csvFile="csv/FR5_calibration_2020-02-06.csv" ></production>
+	</fRole>
+		<fRole class="org.volante.abm.agent.fr.DefaultFR" label="FR6" serialID="5"
+	givingUpMean="0.001" givingInMean="0">
+		<production class="org.volante.abm.example.SimpleProductionModel"
+			csvFile="csv/FR6_calibration_2020-02-03e.csv" ></production>
+	</fRole>
+		<fRole class="org.volante.abm.agent.fr.DefaultFR" label="FR7" serialID="6"
+	givingUpMean="0" givingInMean="0">
+		<production class="org.volante.abm.example.SimpleProductionModel"
+			csvFile="csv/FR7_calibration_2020-02-03.csv" ></production>
+	</fRole>
+	<fRole class="org.volante.abm.agent.fr.DefaultFR" label="FR8" serialID="7"
+	givingUpMean="0.001" givingInMean="0">
+		<production class="org.volante.abm.example.SimpleProductionModel"
+			csvFile="csv/FR8_calibration_2020-02-10.csv" ></production>
+	</fRole>
+</functionalRoles>

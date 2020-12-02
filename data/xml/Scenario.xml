@@ -1,0 +1,29 @@
+<scenario startTick="2001" endTick="2005" world="Brazil" scenario="CRAFTYTest">
+	<capitals class="org.volante.abm.serialization.CSVCapitalLoader" file="csv/Capitals.csv" indexed="true"></capitals>
+	<services class="org.volante.abm.serialization.CSVServiceLoader" file="csv/Services.csv" indexed="true"/>
+	<outputs outputDirectory="output/%w/%r/%s/%i/" filePattern="%s-%i-%o" tickPattern="%s-%i-%o-%y" >
+		<output class="org.volante.abm.output.DisplayVideoWriter" includeSurroundings="true" imagesPerFrame="2" height="500" width="700">
+			<display class="org.volante.abm.template.visualisation.TestAgents" title="AgentTypesVideo"/>
+		</output>
+		<output class="org.volante.abm.output.CellTable" addTick="true" addRegion="true" addCellRegion="true"
+				addServices="true" addCapitals="true" addLandUse="true" addAgent="true" doubleFormat="0.000" />				
+	</outputs>
+	<displays  class="org.volante.abm.visualisation.DefaultModelDisplays">
+	    <display class="org.volante.abm.visualisation.AgentTypeDisplay" prefix="" title="AFT Allocation">
+        	<aftColor aft="FR1"><color class="com.moseph.modelutils.serialisation.MColor" r="255" g="231" b="186"/></aftColor>
+        	<aftColor aft="FR2"><color class="com.moseph.modelutils.serialisation.MColor" r="238" g="216" b="174"/></aftColor>
+        	<aftColor aft="FR3"><color class="com.moseph.modelutils.serialisation.MColor" r="205" g="186" b="150"/></aftColor>
+        	<aftColor aft="FR4"><color class="com.moseph.modelutils.serialisation.MColor" r="0" g="100" b="0"/></aftColor>
+        	<aftColor aft="FR5"><color class="com.moseph.modelutils.serialisation.MColor" r="34" g="139" b="34"/></aftColor>
+        	<aftColor aft="FR6"><color class="com.moseph.modelutils.serialisation.MColor" r="0" g="139" b="139"/></aftColor>
+        	<aftColor aft="FR7"><color class="com.moseph.modelutils.serialisation.MColor" r="0" g="0" b="0"/></aftColor>
+        	<aftColor aft="FR8"><color class="com.moseph.modelutils.serialisation.MColor" r="238" g="154" b="0"/></aftColor>
+    	</display>
+		<display class="org.volante.abm.visualisation.CapitalDisplay" initial="Cap1" title="Capitals"/>
+		<display class="org.volante.abm.visualisation.ProductionDisplay" initial="Cereal" title="Production"/>
+		<display class="org.volante.abm.visualisation.AgentTypeDisplay" title="AFT Allocation"/>
+		<display class="org.volante.abm.visualisation.CompetitivenessDisplay" initial="High_Cereals" title="Competitiveness"/>
+		<display class="org.volante.abm.visualisation.SubmodelDisplays" title="Submodels"/>
+	</displays>		
+	<worldLoaderFile>xml/World_XML.xml</worldLoaderFile>
+</scenario>

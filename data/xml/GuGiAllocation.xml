@@ -1,0 +1,2 @@
+<allocation class="org.volante.abm.example.GiveUpGiveInAllocationModel" 
+	numCells="10" numTakeovers="100"/>

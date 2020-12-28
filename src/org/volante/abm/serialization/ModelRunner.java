@@ -68,15 +68,24 @@ public class ModelRunner
 		logger.info("Start CRAFTY CoBRA");
 		
 		String[] realArgs = null;
+
 		try {
 			Class.forName("mpi.MPI");
 			realArgs = MPI.Init(args);
 
+		} catch (NoClassDefFoundError e) {
+			logger.error("No MPI in classpath (this message can be ignored if not running in parallel)!");
+			realArgs = args;
 		} catch (ClassNotFoundException e) {
 			logger.error("No MPI in classpath (this message can be ignored if not running in parallel)!");
 			realArgs = args;
+
+		} catch (UnsatisfiedLinkError e) {
+			logger.error(
+			        "MPI is in classpath but not linked to shared libraries correctly (this message can be ignored if not running in parallel)!");
+			realArgs = args;
 		}
-		//realArgs = args;//Vfix
+
 		CommandLineParser parser = new BasicParser();
 		CommandLine cmd = parser.parse(manageOptions(), realArgs);
 		if (cmd.hasOption('h')) {
@@ -156,10 +165,13 @@ public class ModelRunner
 			Class.forName("mpi.MPI");
 			MPI.Finalize();
 		} catch (ClassNotFoundException e) {
-			logger.error("No MPI in classpath!");
+			logger.info("Error during MPI finilization. No MPI in classpath!");
+//			e.printStackTrace();
+		} catch (NoClassDefFoundError ncde) {
+			logger.info("Error during MPI finilization. No MPI class linked!");
+//			ncde.printStackTrace();
 		} catch (Exception exception) {
-			logger.error("Error during MPI finilization: "
-					+ exception.getMessage());
+			logger.info("Error during MPI finilization: " + exception.getMessage());
 			exception.printStackTrace();
 		}
 	}

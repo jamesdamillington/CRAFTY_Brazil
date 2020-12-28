@@ -117,22 +117,30 @@ public class WorldLoader {
 	{
 		RegionSet rs = new RegionSet();
 		for( RegionLoader rl : loaders ) {
-			try {
-				Class.forName("mpi.MPI");
-				if (MPI.COMM_WORLD.Rank() == rl.getUid()) {
-					Region r = loadRegion(rl);
+          Region r = loadRegion(rl);
 
-					logger.info("Run region " + r + " on rank " + MPI.COMM_WORLD.Rank());
+          try {
 
-					rs.addRegion(r);
-				}
-			} catch (ClassNotFoundException exception) {
-				Region r = loadRegion(rl);
+        	  Class.forName("mpi.MPI");
+        	  if (MPI.COMM_WORLD.Rank() == rl.getUid()) {
 
-				logger.info("No MPI. Region " + r + " loaded.");
+        		  logger.info("Run region " + r + " on rank " + MPI.COMM_WORLD.Rank());
 
-				rs.addRegion(r);
-			}
+        	  }
+          } catch (NoClassDefFoundError ncde) {
+        	  logger.error("NoClassDefFoundError: No MPI. Region " + r + " loaded.");
+
+          } catch (UnsatisfiedLinkError ule) {
+        	  logger.error("MPI is in classpath but not linked to shared libraries correctly (this message can be ignored if not running in parallel)!" + " No MPI. Region \" + r + \" loaded.\");");
+
+          } catch (ClassNotFoundException cnfe) {
+        	  logger.error("ClassNotFoundException: No MPI. Region " + r + " loaded.");
+
+          } finally {
+
+        	  rs.addRegion(r);
+
+          }
 		}
 		return rs;
 	}

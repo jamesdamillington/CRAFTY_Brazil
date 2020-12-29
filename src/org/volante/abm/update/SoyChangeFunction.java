@@ -24,6 +24,7 @@ package org.volante.abm.update;
 
 import java.awt.List;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -33,6 +34,7 @@ import java.util.Scanner;
 import org.simpleframework.xml.Attribute;
 import org.volante.abm.data.Capital;
 import org.volante.abm.data.Cell;
+import org.volante.abm.data.DataDirUtil;
 import org.volante.abm.data.ModelData;
 import org.volante.abm.data.Region;
 import org.volante.abm.schedule.RunInfo;
@@ -116,8 +118,8 @@ public class SoyChangeFunction implements CapitalUpdateFunction {
 			}
 		}*/
 		
-		
-		BufferedReader tr = new BufferedReader(new FileReader("C:\\Users\\k1076631\\craftyworkspace\\CRAFTY_TemplateCoBRA\\data\\csv\\Update"+year+".csv"));
+		File csvDir = new File(DataDirUtil.getDataDir(), "csv");
+		BufferedReader tr = new BufferedReader(new FileReader(new File(csvDir, "Update"+year+".csv")));
 		String line=tr.readLine();//remove top line of csv
 		
 		 while ((line = tr.readLine()) != null) {
@@ -190,7 +192,8 @@ public class SoyChangeFunction implements CapitalUpdateFunction {
 		if (capital == null) {
 			capital = data.capitals.forName(capitalName);
 		}
-		BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\k1076631\\craftyworkspace\\CRAFTY_TemplateCoBRA\\data\\csv\\Update2000.csv"));
+		File csvDir = new File(DataDirUtil.getDataDir(), "csv");
+		BufferedReader br = new BufferedReader(new FileReader(new File(csvDir, "Update2000.csv")));
 		String line = br.readLine();//remove top line of csv
 		
 		 while ((line = br.readLine()) != null) {

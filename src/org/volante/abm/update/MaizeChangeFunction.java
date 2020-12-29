@@ -24,6 +24,7 @@ package org.volante.abm.update;
 
 import java.awt.List;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import org.simpleframework.xml.Attribute;
 import org.volante.abm.data.Capital;
 import org.volante.abm.data.Cell;
+import org.volante.abm.data.DataDirUtil;
 import org.volante.abm.data.ModelData;
 import org.volante.abm.data.Region;
 import org.volante.abm.schedule.RunInfo;
@@ -113,8 +115,8 @@ public class MaizeChangeFunction implements CapitalUpdateFunction {
 			}
 		}*/
 		
-		
-		BufferedReader tr = new BufferedReader(new FileReader("C:\\Users\\k1076631\\craftyworkspace\\CRAFTY_TemplateCoBRA\\data\\csv\\Temperature"+year+".csv"));
+		File csvDir = new File(DataDirUtil.getDataDir(), "csv");
+		BufferedReader tr = new BufferedReader(new FileReader(new File(csvDir, "Temperature"+year+".csv")));
 		String line;
 		
 		 while ((line = tr.readLine()) != null) {
@@ -128,8 +130,8 @@ public class MaizeChangeFunction implements CapitalUpdateFunction {
 		       }
 		 }
 		 tr.close();
-		 
-		 BufferedReader br2 = new BufferedReader(new FileReader("C:\\Users\\k1076631\\craftyworkspace\\CRAFTY_TemplateCoBRA\\data\\csv\\Precipitation"+year+".csv"));
+
+		 BufferedReader br2 = new BufferedReader(new FileReader(new File(csvDir, "Precipitation"+year+".csv")));
 			String line2;
 			 while ((line2 = br2.readLine()) != null) {
 			    	
@@ -198,7 +200,8 @@ public class MaizeChangeFunction implements CapitalUpdateFunction {
 		if (capital == null) {
 			capital = data.capitals.forName(capitalName);
 		}
-		BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\k1076631\\craftyworkspace\\CRAFTY_TemplateCoBRA\\data\\csv\\MaizeSoilQuality.csv"));
+		File csvDir = new File(DataDirUtil.getDataDir(), "csv");
+		BufferedReader br = new BufferedReader(new FileReader(new File(csvDir, "MaizeSoilQuality.csv")));
 		String line=br.readLine();//remove top line of csv
 		
 		 while ((line = br.readLine()) != null) {

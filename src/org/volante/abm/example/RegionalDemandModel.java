@@ -32,6 +32,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.simpleframework.xml.Attribute;
 import org.volante.abm.data.Cell;
+import org.volante.abm.data.DataDirUtil;
 import org.volante.abm.data.ModelData;
 import org.volante.abm.data.Region;
 import org.volante.abm.data.Service;
@@ -78,6 +79,7 @@ public class RegionalDemandModel implements DemandModel, PreTickAction, PostTick
 	protected DoubleMap<Service> perCellDemand = null;
 	protected RunInfo runInfo = null;
 	protected ModelData modelData = null;
+	private File dataDir;
 
 	/**
 	 * Name of CSV file that contains per-year demand levels
@@ -117,6 +119,8 @@ public class RegionalDemandModel implements DemandModel, PreTickAction, PostTick
 		if (demandCSV != null) {
 			loadDemandCurves();
 		}
+
+		this.dataDir = DataDirUtil.getDataDir();
 	}
 
 	@Override
@@ -201,7 +205,7 @@ public class RegionalDemandModel implements DemandModel, PreTickAction, PostTick
 		log.info("Loading demand from tick: " + tick);
 		log.info("Waiting for file update");
 		if(tick!=runInfo.getSchedule().getStartTick()){
-			File filex = new File("C:/Users/k1076631/craftyworkspace/CRAFTY_TemplateCoBRA/data/updated2.txt");
+			File filex = new File(this.dataDir, "updated2.txt");
 			try {
 				filex.createNewFile();
 			} catch (IOException e) {
@@ -210,7 +214,7 @@ public class RegionalDemandModel implements DemandModel, PreTickAction, PostTick
 			}
 		}
 		while(true){//VALFIX designed to pause until updated file informs program demand.csv has been updated
-			if(new File("C:/Users/k1076631/craftyworkspace/CRAFTY_TemplateCoBRA/data/updated.txt").isFile()){
+			if(new File(this.dataDir, "updated.txt").isFile()){
 				break;
 			}
 			try {
@@ -222,7 +226,7 @@ public class RegionalDemandModel implements DemandModel, PreTickAction, PostTick
 		}
 		try{
 
-    		File file = new File("C:/Users/k1076631/craftyworkspace/CRAFTY_TemplateCoBRA/data/updated.txt");
+    		File file = new File(this.dataDir, "updated.txt");
     		if(file.exists()){
     		file.delete();}//VALFIX delete updated file ready for next tic
     		

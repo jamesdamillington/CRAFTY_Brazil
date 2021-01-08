@@ -5,6 +5,14 @@ This repo contains code for an implementation of the CRAFTY model across a Brazi
 
 This model version is intended for use with [BioLUC](https://github.com/StevenPeterson/CRAFTY-BioLuc), linked via [FLUTE Maestro](https://github.com/jamesdamillington/FLUTE_Maestro). Scripts to [create model input data](https://github.com/jamesdamillington/CRAFTYInput) and to [analyse model outputs](https://github.com/jamesdamillington/CRAFTYOutput) are also available. 
 
+## Building the project without Eclipse
+
+To help users build the project independently of Eclipse we have provided an `ant` build script, `build.xml`. To rebuild compiled binaries run the following command from the root of this repository.
+
+```bash
+ant clean && ant
+```
+
 Original repo readme follows, and see the newer [CRAFTY homepage](https://landchange.imk-ifu.kit.edu/CRAFTY)
 
 # CRAFTY CoBRA Template
@@ -83,14 +91,6 @@ ignored.
 ## Post-Processing
 The folder ./config/R contains templates to aggregate and visualise simulation output data with R.
 See [crafty wiki](https://www.wiki.ed.ac.uk/display/CRAFTY/Post-Processing) for details.
-
-## Building the project without Eclipse
-
-To help users build the project independently of Eclipse we have provided an `ant` build script, `build.xml`. To rebuild compiled binaries run the following command from the root of this repository.
-
-```bash
-ant clean && ant
-```
 
 ***
 

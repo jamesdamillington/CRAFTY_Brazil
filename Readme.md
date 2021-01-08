@@ -84,7 +84,16 @@ ignored.
 The folder ./config/R contains templates to aggregate and visualise simulation output data with R.
 See [crafty wiki](https://www.wiki.ed.ac.uk/display/CRAFTY/Post-Processing) for details.
 
+## Building the project without Eclipse
+
+To help users build the project independently of Eclipse we have provided an `ant` build script, `build.xml`. To rebuild compiled binaries run the following command from the root of this repository.
+
+```bash
+ant clean && ant
+```
+
 ***
 
 If you have any further questions don't hesitate to contact
 Sascha.Holzhauer@ed.ac.uk 
+

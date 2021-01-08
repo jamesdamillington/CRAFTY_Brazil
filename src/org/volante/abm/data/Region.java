@@ -265,12 +265,12 @@ public class Region implements Regions, PreTickAction {
 		return rinfo;
 	}
 
-	MoreNetworkService<SocialAgent, ? extends MoreEdge<SocialAgent>> networkService;
+	MoreNetworkService<SocialAgent, MoreEdge<SocialAgent>> networkService;
 
 	/**
 	 * @return the networkService
 	 */
-	public MoreNetworkService<SocialAgent, ? extends MoreEdge<SocialAgent>> getNetworkService() {
+	public MoreNetworkService<SocialAgent, MoreEdge<SocialAgent>> getNetworkService() {
 		return networkService;
 	}
 
@@ -281,7 +281,7 @@ public class Region implements Regions, PreTickAction {
 	 *        the networkService to set
 	 */
 	public void setNetworkService(
-			MoreNetworkService<SocialAgent, ? extends MoreEdge<SocialAgent>> networkService) {
+			MoreNetworkService<SocialAgent, MoreEdge<SocialAgent>> networkService) {
 		this.networkService = networkService;
 	}
 

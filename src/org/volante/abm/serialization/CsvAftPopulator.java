@@ -1,24 +1,24 @@
 /**
  * This file is part of
- * 
+ *
  * CRAFTY - Competition for Resources between Agent Functional TYpes
  *
  * Copyright (C) 2015 School of GeoScience, University of Edinburgh, Edinburgh, UK
- * 
+ *
  * CRAFTY is free software: You can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software 
+ * terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- *  
+ *
  * CRAFTY is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * School of Geoscience, University of Edinburgh, Edinburgh, UK
- * 
+ *
  * Created by Sascha Holzhauer on 19 Mar 2015
  */
 package org.volante.abm.serialization;
@@ -61,15 +61,15 @@ import de.cesr.parma.core.PmParameterManager;
 
 /**
  * Responsible for reading cell and agent properties.
- * 
+ *
  * @author Sascha Holzhauer
- * 
+ *
  */
 public class CsvAftPopulator implements AftPopulator {
 
 	@Element(required = true)
 	String	csvFile		= "";
-	
+
 	@Element(required = false)
 	String csvCapitalFactorFile = null;
 
@@ -78,21 +78,24 @@ public class CsvAftPopulator implements AftPopulator {
 
 	@Element(required = false)
 	String btColumnName = "BT";
-	
+
 	@Element(required = false)
 	String frColumnName = "FR";
-	
+
 	@Element(required = false)
 	String			xColumn			= "X";
 	@Element(required = false)
 	String			yColumn			= "Y";
-	
+
+	@Element(required = false)
+	String			muniIdColumn	= "muniID";  //JM changed - included in region file to map output, remove below to avoid AgentProperty error
+
 	@Element(required = false)
 	IntTransformer	xTransformer	= null;
 
 	@Element(required = false)
 	IntTransformer	yTransformer	= null;
-	
+
 	@Element(required = false)
 	boolean manageEveryHomeCell = false;  //val changed - see changelog 15/06/2017 (needed just to get crafty working in the first place!)
 
@@ -114,14 +117,14 @@ public class CsvAftPopulator implements AftPopulator {
 
 	@Element(required = false)
 	String trueIdentifier = "1";
-	
-	
+
+
 	@Element(required = false)
 	AgentAssembler agentAssembler = new DefaultSocialAgentAssembler();
 
 	@Element(required=false)
 	boolean shuffleCellsBeforeAssembling = true;
-	
+
 	@Element(required = false)
 	int notificationInterval = 10000;
 
@@ -141,7 +144,7 @@ public class CsvAftPopulator implements AftPopulator {
 	 */
 	@Override
 	public void initialise(RegionLoader rLoader) throws Exception {
-		
+
 		ModelData data = rLoader.modelData;
 
 		boolean hasAgentColumn = false;
@@ -178,6 +181,8 @@ public class CsvAftPopulator implements AftPopulator {
 
 		agentPropertyColumns.remove(xColumn);
 		agentPropertyColumns.remove(yColumn);
+		agentPropertyColumns.remove(muniIdColumn);
+
 		for (Capital cap : data.capitals) {
 			agentPropertyColumns.remove(cap.getName());
 		}
@@ -196,19 +201,19 @@ public class CsvAftPopulator implements AftPopulator {
 		if (columns.contains(btColumnName)) {
 			assignBT = true;
 			agentPropertyColumns.remove(btColumnName);
-			
+
 		}
-		
+
 		if (columns.contains(frColumnName)) {
 			assignFR = true;
 			agentPropertyColumns.remove(frColumnName);
-			
+
 		}
 
 		if (taggedHomeCells) {
 			agentPropertyColumns.remove(manageHomeCellColumnName);
 		}
-		
+
 		if (manageEveryHomeCell && !manageNoHomeCell && !taggedHomeCells) {
 			homeCellMode = HomeCellMode.MANAGE_EVERY;
 		} else if (!manageEveryHomeCell && manageNoHomeCell
@@ -254,7 +259,7 @@ public class CsvAftPopulator implements AftPopulator {
 		// LOGGING ->
 
 		this.agentAssembler.initialise(data, rLoader.runInfo, rLoader.region);
-		
+
 		int counter = 0;
 
 		while (reader.readRecord()) {
@@ -263,9 +268,9 @@ public class CsvAftPopulator implements AftPopulator {
 				logger.debug("Read row " + reader.getCurrentRecord());
 			}
 			// LOGGING ->
-			
+
 			counter++;
-			
+
 			if (counter % notificationInterval == 0) {
 				// <- LOGGING
 				logger.info("\tNumber of read rows: " + counter);
@@ -307,7 +312,7 @@ public class CsvAftPopulator implements AftPopulator {
 					// assemble agents straight away
 					agentId = reader.get(agentIdColumnName);
 				}
-						
+
 				// assemble agent
 				LandUseAgent agent =
 						assembleAgent(rLoader, assignBT, assignFR,
@@ -346,7 +351,7 @@ public class CsvAftPopulator implements AftPopulator {
 								+ ") defined. Will ignore the previous one!");
 					}
 					agentHomeCells.put(agentId, c);
-					
+
 					// check if home cell is managed:
 					if (homeCellMode == HomeCellMode.MANAGE_EVERY) {
 						addManagedCell(agentCellMap, c, agentId);
@@ -373,7 +378,7 @@ public class CsvAftPopulator implements AftPopulator {
 					agentProperties.put(agentId, agentPropertyMap);
 
 				} else {
-					
+
 					// assign all non-home cells in the 'agentID -> cells' map
 					addManagedCell(agentCellMap, c, agentId);
 				}
@@ -397,7 +402,7 @@ public class CsvAftPopulator implements AftPopulator {
 					assembleAgent(rLoader, assignBT, assignFR, reader,
 					agentHomeCells.get(agentId), agentId,
 					agentBTs.get(agentId), agentFRs.get(agentId));
-			
+
 			rLoader.region.setInitialOwnership(agent, agentCellMap.get(agentId)
 					.toArray(new Cell[1]));
 
@@ -429,7 +434,7 @@ public class CsvAftPopulator implements AftPopulator {
 			boolean assignFR, CsvReader reader, Cell c, String agentId,
 			String btValue, String frValue)
 			throws IOException {
-		
+
 
 		if (frValue.equals(unmanagedIdentifier)) {
 			return Agent.NOT_MANAGED;
@@ -502,12 +507,12 @@ public class CsvAftPopulator implements AftPopulator {
 		}
 		agentCellMap.get(agentId).add(c);
 	}
-	
+
 	/**
 	 * Uses same column names as defined for the 'main' CSV file.
-	 * 
+	 *
 	 * TODO test
-	 * 
+	 *
 	 * @param rLoader
 	 * @throws Exception
 	 */
